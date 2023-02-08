@@ -1,3 +1,4 @@
+USE Shumabo_secondary_school
 
 -- creating schemas
 
@@ -7,7 +8,7 @@
 */
 
 GO  
-    CREATE SCHEMA Shumabo AUTHORIZATION Director;
+    CREATE SCHEMA Shumabo AUTHORIZATION Mesafint;
 GO
 
 
@@ -17,9 +18,8 @@ GO
 */
 -- Authorizing Assignments
 
-    CREATE SCHEMA Assignment AUTHORIZATION Unit_leader;
+    CREATE SCHEMA Assignment AUTHORIZATION Abiy;
  GO
-
 
 /*  
     Creating schemas which are
@@ -29,12 +29,12 @@ GO
 -- Operations 
 -- authorizing Triggers
  GO
-    CREATE SCHEMA Triggers AUTHORIZATION System_Admin;
+    CREATE SCHEMA Triggers AUTHORIZATION Gsix;
  GO
 
 -- authorizing views
  GO
-    CREATE SCHEMA views AUTHORIZATION System_Admin;
+    CREATE SCHEMA views AUTHORIZATION Gsix;
  GO
 
 -- Authorizing 
@@ -46,17 +46,17 @@ GO
 
 -- Authorizing Students' data
 
-    CREATE SCHEMA Stud_data AUTHORIZATION Registrar
+    CREATE SCHEMA Stud_data AUTHORIZATION AlemGezi
  GO
 
 -- Authorizing staffs' data
     
-    CREATE SCHEMA Staff_data AUTHORIZATION Registrar
+    CREATE SCHEMA Staff_data AUTHORIZATION AlemGezi
  GO
 
 -- Authorizing papers for students
 
-    CREATE SCHEMA Paper AUTHORIZATION Registrar
+    CREATE SCHEMA Paper AUTHORIZATION Alemgezi
  GO
 
 /*  
@@ -66,12 +66,12 @@ GO
 
 -- authorizing grade result process
  GO
-    CREATE SCHEMA Result AUTHORIZATION Teacher;
+    CREATE SCHEMA Result AUTHORIZATION Mintesnot;
  GO
 
 -- authorizing generating ou Class_schedule
 
-    CREATE SCHEMA Schedule AUTHORIZATION Teacher;
+    CREATE SCHEMA Schedule AUTHORIZATION Mintesnot;
  GO
 
 /*  
@@ -82,9 +82,19 @@ GO
 -- authorizing processing on Items
 
  GO
-    CREATE SCHEMA Resource AUTHORIZATION Resource_officer;
+    CREATE SCHEMA Resource AUTHORIZATION Zemenay;
  GO
 
+/* 
+    Creating schema which
+    contains the security statuses like logins, users, schemas,
+*/
+ --- Create a schema for logins, users, schemas, roles, and other security statuses
+
+ GO
+   CREATE SCHEMA Security_Info;
+ GO
+ 
  /*  
     Creating schemas which are
     Publicaly authorized

@@ -64,3 +64,9 @@ GO
 GO
     CREATE USER Abiy FOR LOGIN Unit_leader
 GO
+
+-- 10. creating a user for the Security_Admin login
+
+GO
+    CREATE USER Begood FOR LOGIN Security_admin
+GO

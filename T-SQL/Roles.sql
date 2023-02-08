@@ -12,13 +12,13 @@ USE Shumabo_secondary_school
     ON SCHEMA :: Security_Info 
     TO Security_Controller
 
--- 4. Assign the Security_Controller role to Security_admin
+-- 4. Assign the Security_Controller role to user Begood whose login is 'Security_Admin'
 
-    EXEC sp_addrolemember 'Security_Controller', 'Security_admin';
+    EXEC sp_addrolemember 'Security_Controller', 'Begood';
 
 -- 5. Execute the created user defined role || Security_controller
 
-    EXECUTE AS ROLE Security_Controller;
+    EXECUTE AS ROLE = 'Security_Controller';
 
 
 

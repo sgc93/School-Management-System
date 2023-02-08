@@ -36,3 +36,8 @@ GO
     CREATE LOGIN Unit_leader WITH  PASSWORD = 'UL1234'
 GO
 
+-- Login 8: Create a Security_admin login
+
+GO
+    CREATE Login Security_Admin WITH PASSWORD = 'secadmin1234'
+GO

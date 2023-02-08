@@ -19,30 +19,34 @@ GO
 GO
 
 -- 4. Creating a user for Student login | for publicaly authorized functionalities
-GO
+
+-- Student 1 
     CREATE USER Bezabh FOR LOGIN Student
 GO
 
+-- student 2
 GO
     CREATE USER Seblewongel FOR LOGIN Student
 GO
 
 
 -- 5. Creating a user for Parent login
-GO
+
+-- Parent 1
     CREATE USER  Bogale FOR LOGIN Parent
 GO
 
-GO
+-- Parent 2
     CREATE USER Meshesha FOR LOGIN Parent
 GO
 
 -- 6. Creating a user for Staff login
-GO
+
+-- Staff 1
     CREATE USER Tiruaynet FOR LOGIN Staff
 GO
 
-GO
+-- Staff 2
     CREATE USER Wudnesh FOR LOGIN Staff
 GO
 
@@ -60,6 +64,3 @@ GO
 GO
     CREATE USER Abiy FOR LOGIN Unit_leader
 GO
-
-
-select * from Staff_list

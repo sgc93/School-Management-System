@@ -11,7 +11,6 @@ GO
     CREATE SCHEMA Shumabo AUTHORIZATION Mesafint;
 GO
 
-
 /*  
     Creating schemas which are
     authorized by Unit_leader

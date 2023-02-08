@@ -177,14 +177,14 @@ GO
 -- store the deleted calanders
 
 GO
-	CREATE TRIGGER Deleted_Calendar_list
-	ON Calendar_list
+	CREATE TRIGGER Shumabo.tr_deleted_Academic_calendar
+	ON Shumabo.Academic_calendar
 	AFTER DELETE
 	AS
 	BEGIN
 		SET NOCOUNT ON;
 
-		INSERT INTO Deleted_Calendar_list
+		INSERT INTO Shumabo.Deleted_Academic_calendar
 		SELECT * FROM deleted;
 	END;
 GO
@@ -206,12 +206,12 @@ the server and the client. When NOCOUNT is set to ON, the number of affected
 -- Storing the deleted Progress report
 
 GO
-	CREATE TRIGGER tr_store_deleted_progress_report
-	ON Progress_report
+	CREATE TRIGGER Shumabo.tr_store_deleted_progress_report
+	ON Shumabo.Progress_report
 	AFTER DELETE
 	AS
 	BEGIN
-		INSERT INTO Deleted_progress_report (Ac_year, Grade_level_Id, Num_of_section, Num_of_stud, Num_of_male_stud, Num_of_female_stud, Max_avg, Min_avg, Passed_stud_percentage, Failed_stud_percentage, Passed_male_percentage, Failed_male_percentage, Passed_female_percentage, Failed_female_percentage)
+		INSERT INTO Shumabo.Deleted_progress_report (Ac_year, Grade_level_Id, Num_of_section, Num_of_stud, Num_of_male_stud, Num_of_female_stud, Max_avg, Min_avg, Passed_stud_percentage, Failed_stud_percentage, Passed_male_percentage, Failed_male_percentage, Passed_female_percentage, Failed_female_percentage)
 		SELECT Ac_year, Grade_level_Id, Num_of_section, Num_of_stud, Num_of_male_stud, Num_of_female_stud, Max_avg, Min_avg, Passed_stud_percentage, Failed_stud_percentage, Passed_male_percentage, Failed_male_percentage, Passed_female_percentage, Failed_female_percentage FROM deleted;
 	END
 GO

@@ -176,7 +176,7 @@ CREATE TABLE Transform_form_list (
 
 -- table 11: calculated Progress reports for each grade
 
-CREATE TABLE Progress_report (
+CREATE TABLE Shumabo.Progress_report (
     Report_no INT NOT null IDENTITY(111,3),
     Ac_year INT NOT NULL,
     Grade_level_Id VARCHAR(6) not null,
@@ -195,6 +195,7 @@ CREATE TABLE Progress_report (
     CONSTRAINT PK_Progress PRIMARY KEY (Report_no),
     CONSTRAINT FK_Progress_Grade FOREIGN key (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID)
 );
+
 
 -- table 12: list of students with passed and failed students
 
@@ -302,7 +303,7 @@ CREATE TABLE Teacher_Section_Subject (
 
 -- table 19: list of acadamic calendars
 
-CREATE TABLE Calendar_list (
+CREATE TABLE Shumabo.Academic_calendar (
     Calendar_ID VARCHAR(6) NOT NULL,
     Ac_Year INT,
     Activity_name VARCHAR(255),
@@ -785,11 +786,11 @@ VALUES  ('T001', 'SP9'),
 
 -- for Table
 
-INSERT INTO Calendar_list (Calendar_ID, Ac_Year, Activity_name, Activity_description, Activity_start_date, Activity_end_date, Comment)
+INSERT INTO Shumabo.Academic_calendar (Calendar_ID, Ac_Year, Activity_name, Activity_description, Activity_start_date, Activity_end_date, Comment)
 VALUES ('C2023', 2023, 'Cleaning Day', 'by this program almost all parts of the school are going to be cleaned by both students and staff members', '2023-02-01', '2023-02-05', 'Commete, which constain 3 members, should me constructed ')
 
  -- check
- -- SELECT * FROM Calendar_list
+ -- SELECT * FROM Shumabo.Academic_calendar
 
 
 -- for Table

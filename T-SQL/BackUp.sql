@@ -3,7 +3,7 @@
 
 -- Table 2
 -- table for storing deleted Calendars
-CREATE TABLE Deleted_Calendar_list (
+CREATE TABLE Shumabo.Deleted_Academic_calendar (
 	Calendar_ID VARCHAR(6) NOT NULL,
     Ac_Year INT,
     Activity_name VARCHAR(255),
@@ -14,10 +14,12 @@ CREATE TABLE Deleted_Calendar_list (
     CONSTRAINT PK_Deleted_Calendar PRIMARY KEY(Calendar_ID)
 );
 
+
+SELECT * FROM Shumabo.deleted_Academic_Calendar
 -- TAble 2
 -- for storing deleted progress reports
 
-CREATE TABLE Deleted_progress_report (
+CREATE TABLE Shumabo.Deleted_progress_report (
     Report_no INT NOT null IDENTITY(111,3),
     Ac_year INT NOT NULL,
     Grade_level_Id VARCHAR(6) not null,
@@ -33,8 +35,6 @@ CREATE TABLE Deleted_progress_report (
     Failed_male_percentage FLOAT,
     Passed_female_percentage FLOAT,
     Failed_female_percentage FLOAT,
-    CONSTRAINT PK_DPR PRIMARY KEY (Report_no),
-    CONSTRAINT FK_DPR_Grade FOREIGN key (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID)
 );
 
 

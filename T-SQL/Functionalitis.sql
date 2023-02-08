@@ -568,37 +568,35 @@ EXEC Update_Sec_Sub_Assignment 'T007', 'Subject_code', 'SE10'
 -- functionality 28: Creating an academic Calendar
 
 GO
-  CREATE PROCEDURE Add_Calendar (@Calendar_ID VARCHAR(6), @Ac_Year INT, @Activity_name VARCHAR(255), @Activity_description TEXT, @Activity_start_date DATE, @Activity_end_date DATE, @Comment TEXT)
+  CREATE PROCEDURE Shumabo.Add_Calendar (@Calendar_ID VARCHAR(6), @Ac_Year INT, @Activity_name VARCHAR(255), @Activity_description TEXT, @Activity_start_date DATE, @Activity_end_date DATE, @Comment TEXT)
   AS
   BEGIN
     SET NOCOUNT ON;
 
-    INSERT INTO Calendar_list (Calendar_ID, Ac_Year, Activity_name, Activity_description, Activity_start_date, Activity_end_date, Comment)
+    INSERT INTO Shumabo.Academic_Calendar (Calendar_ID, Ac_Year, Activity_name, Activity_description, Activity_start_date, Activity_end_date, Comment)
     VALUES (@Calendar_ID, @Ac_Year, @Activity_name, @Activity_description, @Activity_start_date, @Activity_end_date, @Comment)
   END
 GO
 
-EXEC Add_Calendar 'Cal2023', '2023', 'Semester Break', 'since we all have ...', '2023-02-20', '2023-03-04', 'no more than 14 days'
-EXEC Add_Calendar 'C2023b', '2023', 'Studnets Movement', 'this will be the movement of ...', '2023-02-20', '2023-02-21', 'teacheing learning process will be cloase for only 1 day'
+EXEC shumabo.Add_Calendar 'Cal2023', '2023', 'Semester Break', 'since we all have ...', '2023-02-20', '2023-03-04', 'no more than 14 days'
+EXEC Shumabo.Add_Calendar 'C2023b', '2023', 'Studnets Movement', 'this will be the movement of ...', '2023-02-20', '2023-02-21', 'teacheing learning process will be cloase for only 1 day'
 
 -- functionality 29: Updating a created calendar
 
 GO
-  CREATE PROCEDURE Update_Calendar (@Calendar_ID VARCHAR(6), @Attribute_name NVARCHAR(50), @New_value sql_variant)
+  CREATE PROCEDURE Shumabo.Update_Calendar (@Calendar_ID VARCHAR(6), @Attribute_name NVARCHAR(50), @New_value sql_variant)
   AS
   BEGIN
     SET NOCOUNT ON;
     
     DECLARE @SQL NVARCHAR(MAX)
 
-    SET @SQL = N'UPDATE Calendar_list SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE Calendar_ID = ' + '''' + @Calendar_ID + ''''
+    SET @SQL = N'UPDATE Shumabo.Academic_calendar SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE Calendar_ID = ' + '''' + @Calendar_ID + ''''
     EXECUTE sp_executesql @SQL
   END
 GO
 
-EXEC Update_Calendar 'Cal202', 'Ac_Year', '2020'
-
-
+EXEC Shumabo.Update_Calendar 'Cal202', 'Ac_Year', '2020'
 
 -- Functionality 30: display the details of specific Activity in the calendar 
 
@@ -608,7 +606,7 @@ GO
   AS
   RETURN
   (
-    SELECT * FROM Calendar_list
+    SELECT * FROM Shumabo.Academic_Calendar
     WHERE Calendar_ID = @Calendar_ID
   )
 GO
@@ -623,7 +621,7 @@ GO
   AS
   RETURN
   (
-    SELECT * FROM Calendar_list
+    SELECT * FROM Shumabo.Academic_Calendar
     WHERE Ac_Year = @Ac_Year
   )
 GO
@@ -634,18 +632,18 @@ SELECT * FROM dbo.Get_Yearly_Calendar('2020')
 -- Functionlity 32: Removing a certain year calender from the Calendar list
 
 GO
-  CREATE PROCEDURE Delete_Yearly_Calendar (@Ac_Year INT)
+  CREATE PROCEDURE Shumabo.Delete_Yearly_Calendar (@Ac_Year INT)
   AS
   BEGIN
     SET NOCOUNT ON;
     
-    DELETE FROM Calendar_list WHERE Ac_Year = @Ac_Year
+    DELETE FROM Shumabo.Academic_Calendar WHERE Ac_Year = @Ac_Year
 
     PRINT 'You have Removed Calendar of  one year'
   END
 GO
 
-EXEC Delete_Yearly_Calendar '2020'
+EXEC Shumabo.Delete_Yearly_Calendar '2020'
 
 -- Manipulating the Staff members 
 -- Functionlity 33: Add Data of new staff members like director, Record_Officer, ...
@@ -812,7 +810,7 @@ SELECT * FROM dbo.Get_Item('IT1111')
 -- Generating, displaying and updating yearly Progress reports
 -- Functionality 41: generating progress level
 GO
-  CREATE PROCEDURE Generate_Progress_report (@Ac_Year INT, @Grade_level_ID VARCHAR(6))
+  CREATE PROCEDURE Shumabo.Generate_Progress_report (@Ac_Year INT, @Grade_level_ID VARCHAR(6))
   AS
   BEGIN
     DECLARE @Number_of_section INT, 
@@ -854,13 +852,13 @@ GO
       SET @Max_avg = (SELECT MAX(Final_avg) FROM Transcript WHERE Grade_level_ID = @Grade_level_ID AND Ac_year = @Ac_year)
       SET @Min_avg = (SELECT MIN(Final_avg) FROM Transcript WHERE Grade_level_ID = @Grade_level_ID AND Ac_year = @Ac_year) 
       
-    INSERT INTO Progress_report (Ac_year, Grade_level_Id, Num_of_section, Num_of_stud, Num_of_male_stud, Num_of_female_stud, Max_avg, Min_avg, Passed_stud_percentage, Failed_stud_percentage, Passed_male_percentage, Failed_male_percentage, Passed_female_percentage, Failed_female_percentage)
+    INSERT INTO Shumabo.Progress_report (Ac_year, Grade_level_Id, Num_of_section, Num_of_stud, Num_of_male_stud, Num_of_female_stud, Max_avg, Min_avg, Passed_stud_percentage, Failed_stud_percentage, Passed_male_percentage, Failed_male_percentage, Passed_female_percentage, Failed_female_percentage)
     VALUES (@Ac_Year, @Grade_level_ID, @Number_of_section, @Number_of_student, @Number_of_male_stud, @Number_of_female_stud, @Max_avg, @Min_avg, @Passed_stud_percentage, @Failed_stud_percentage, @Passed_male_percentage, @Failed_male_percentage, @Passed_female_percentage, @Failed_female_percentage)
     PRINT 'the progress report is generated successfully.'
   END
 GO
 
-EXEC Generate_Progress_report 2023, 'GID12'
+EXEC Shumabo.Generate_Progress_report 2023, 'GID12'
 
 -- Functionality 42: displaying Progress levels of a specific Grade_level
 
@@ -869,7 +867,7 @@ GO
   RETURNS TABLE
   AS
     RETURN (
-      SELECT * FROM Progress_report
+      SELECT * FROM Shumabo.Progress_report
       WHERE Ac_year = @Ac_year AND Grade_level_ID = @Grade_Level_ID
     )
 GO
@@ -878,15 +876,16 @@ SELECT * FROM dbo.Get_Progress_report(2023, 'GID12')
 
 -- Functionality 43: removing specific registered Progress report
 GO
-  CREATE PROCEDURE Remove_progress_report (@Ac_year INT, @Grade_Level_ID VARCHAR(6))
+  CREATE PROCEDURE Shumabo.Remove_progress_report (@Ac_year INT, @Grade_Level_ID VARCHAR(6))
   AS
   BEGIN
-    DELETE FROM Progress_report 
+    DELETE FROM Shumabo.Progress_report 
     WHERE Ac_year = @Ac_year AND Grade_level_ID = @Grade_Level_ID
   END
 GO
 
-EXEC Remove_progress_report '2023', 'GID12'
+EXEC  Shumabo.Remove_progress_report '2023', 'GID11'
+
 
 -- list of students based of academical status like passed, failed and dropout
 -- Functionality 44: Recording passed and failed students (trigger 5)

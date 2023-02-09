@@ -24,18 +24,17 @@
  
  Use master
  drop DATABASE Shumabo_Secondary_and_Preparatory_school
--- creating tables
+-- creating tables in each schema
 
--- table 1: all parents (of all students) list
+-- table 1: all parents (of all students) list in schema Stud_data
 
-CREATE TABLE Parent_list (
+CREATE TABLE Stud_data.Parent (
     PID_no VARCHAR(15) NOT NULL,
     F_name VARCHAR(50),
     L_name VARCHAR(50),
     M_name VARCHAR(50),
     Gender VARCHAR(10),
     Birth_date DATE,
-    Age INT,
     Relation VARCHAR(255),
     Sub_city VARCHAR(255),
     Kebele VARCHAR(255),
@@ -44,15 +43,12 @@ CREATE TABLE Parent_list (
 
 -- table 2: list of parents' phone number, since we assumed that it will necessary to store more than one phone numbers for each parent
 
-CREATE TABLE Parent_phone (
+CREATE TABLE Stud_data.Parent_phone (
     PID_no VARCHAR(15) NOT NULL,
     Phone_number VARCHAR(20),
     CONSTRAINT PK_Parnent_phone PRIMARY KEY (PID_no, Phone_number),
-    CONSTRAINT FK_Parent_Phone FOREIGN KEY (PID_no) REFERENCES Parent_list(PID_no)
+    CONSTRAINT FK_Parent_Phone FOREIGN KEY (PID_no) REFERENCES Stud_data.Parent(PID_no)
 );
-
-select * from parent_phone
-
 
 -- table 3: list of Grade levels namely:- 9th, 10th, 11th and 12th
 
@@ -71,36 +67,52 @@ CREATE TABLE Section_list (
   CONSTRAINT FK_Section FOREIGN KEY (Grade_level_ID) REFERENCES Grade_level_list (Grade_level_ID)
 );
 
--- table 5: list of all students attended in class
+-- table 5: list of all new students which registered in each year
 
-CREATE TABLE Student_list (
+CREATE TABLE Stud_data.New_Student (
+  Ac_year INT, 
+  Registration_date DATE,
   Stud_ID VARCHAR(10) NOT NULL,
   F_name VARCHAR(50),
   L_name VARCHAR(50),
   M_name VARCHAR(50),
   Gender VARCHAR(6),
   Birth_date DATE,
-  Age INT,
   Sub_city VARCHAR(50),
   Kebele VARCHAR(50),
-  PID_no INT NOT NULL,
+  PID_no VARCHAR(15) NOT NULL
+  CONSTRAINT PK_Stud PRIMARY KEY (Stud_ID), 
+  CONSTRAINT FK_Stud_PID FOREIGN KEY (PID_no) REFERENCES Stud_data.Parent(PID_no)
+  );
+
+-- table 6: list of all students attended in class
+
+CREATE TABLE Stud_data.Student (
+  Ac_year INT, 
+  Stud_ID VARCHAR(10) NOT NULL,
+  F_name VARCHAR(50),
+  L_name VARCHAR(50),
+  M_name VARCHAR(50),
+  Gender VARCHAR(6),
+  Birth_date DATE,
+  Sub_city VARCHAR(50),
+  Kebele VARCHAR(50),
+  PID_no VARCHAR(15) NOT NULL,
   Grade_level_ID VARCHAR(6),
   Section_code VARCHAR(6),
   CONSTRAINT PK_Student PRIMARY KEY (Stud_ID), 
-  CONSTRAINT FK_Student_PID FOREIGN KEY (PID_no) REFERENCES Parent_list(PID_no),
+  CONSTRAINT FK_Student_PID FOREIGN KEY (PID_no) REFERENCES Stud_data.Parent(PID_no),
   CONSTRAINT FK_Student_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID),
   CONSTRAINT FK_Student_Section FOREIGN KEY (Section_code) REFERENCES Section_list(Section_code)
   );
   
-SELECT * FROM Student_list
-
 -- table 6: list of students' phone number, since we assumed that it will necessary to store more than one phone numbers for each student
 
-CREATE TABLE Student_phone (
+CREATE TABLE Stud_data.Student_phone (
     Stud_ID VARCHAR(10) NOT NULL,
     Phone_number VARCHAR(20) NOT NULL,
-    CONSTRAINT PK_Stud PRIMARY KEY (Stud_ID, Phone_number),
-    CONSTRAINT FK_Stud FOREIGN KEY (Stud_ID) REFERENCES Student_list(Stud_ID),
+    CONSTRAINT PK_SP PRIMARY KEY (Stud_ID, Phone_number),
+    CONSTRAINT FK_SPstud FOREIGN KEY (Stud_ID) REFERENCES Stud_data.New_Student(Stud_ID),
 );
 
 -- table 7: a table that contains the yearly results of all students
@@ -130,7 +142,7 @@ CREATE TABLE Roaster_list (
   Second_sem_assignment_15 INT,
   Second_sem_final_exam_50 INT,
   CONSTRAINT PK_Roaster_Stud PRIMARY KEY (Stud_ID),
-  CONSTRAINT FK_Roaster_Stud FOREIGN KEY (Stud_ID) REFERENCES Student_list(Stud_ID),
+  CONSTRAINT FK_Roaster_Stud FOREIGN KEY (Stud_ID) REFERENCES Stud_data.Student(Stud_ID),
   CONSTRAINT FK_Roaster_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID),
   CONSTRAINT FK_Roaster_Subject FOREIGN KEY (Subject_code) REFERENCES Subject_list(Subject_code),
   CONSTRAINT FK_Roaster_Section FOREIGN KEY (Section_code) REFERENCES Section_list(Section_code)
@@ -167,7 +179,7 @@ CREATE TABLE Transform_form_list (
     Application_date DATE,
     Target_school_name VARCHAR(100),
     CONSTRAINT PK_TForm PRIMARY KEY (TSer_no),
-    CONSTRAINT FK_Tform_Stud FOREIGN KEY (Stud_ID) REFERENCES Student_list(Stud_ID),
+    CONSTRAINT FK_Tform_Stud FOREIGN KEY (Stud_ID) REFERENCES Stud_data.Student(Stud_ID),
     CONSTRAINT FK_Tform_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID),
     CONSTRAINT FK_Tform_Section FOREIGN KEY (Section_code) REFERENCES Section_list(Section_code)
 );
@@ -199,7 +211,7 @@ CREATE TABLE Shumabo.Progress_report (
 
 -- table 12: list of students with passed and failed students
 
-CREATE TABLE Pass_fail_Student (
+CREATE TABLE Stud_data.Pass_fail_Student (
   Roll_no int IDENTITY(1,1),
   Ac_year INT, 
   Stud_ID VARCHAR(10) NOT NULL,
@@ -209,17 +221,15 @@ CREATE TABLE Pass_fail_Student (
   Final_avg FLOAT,
   Stud_status VARCHAR(20),
   CONSTRAINT PK_pfs PRIMARY KEY (Roll_no),
-  CONSTRAINT FK_pfs_Stud FOREIGN KEY (Stud_ID) REFERENCES Student_list,
+  CONSTRAINT FK_pfs_Stud FOREIGN KEY (Stud_ID) REFERENCES Stud_data.Student,
   CONSTRAINT FK_pfs_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID),
   CONSTRAINT FK_pfs_Section FOREIGN KEY (Section_code) REFERENCES Section_list(Section_code)
 );
 
-drop TABLE Pass_fail_Student
-select * from pass_fail_student
-
 -- table 13: list of withdrew students
 
-CREATE TABLE Non_attendant (
+CREATE TABLE Stud_data.Non_attendant (
+  Ac_Year INT,
   Stud_ID VARCHAR(10) NOT NULL,
   Grade_level_ID VARCHAR(6) NOT NULL,
   Section_code VARCHAR(6) NOT NULL,
@@ -232,30 +242,29 @@ CREATE TABLE Non_attendant (
   CONSTRAINT FK_NA_Section FOREIGN KEY (Section_code) REFERENCES Section_list(Section_code)
 )
 
-select * from Non_attendant
 -- table 13: list of all teachers
 
-CREATE TABLE Teacher_list (
+CREATE TABLE Teacher_data.Teacher (
     Teacher_ID VARCHAR(10) NOT NULL,
     F_name VARCHAR(50),
     L_name VARCHAR(50),
     M_name VARCHAR(50),
     Gender VARCHAR(8),
     Birth_date DATE,
-    Age int,
     Degree_level VARCHAR(30),
     Sub_city VARCHAR(30),
     Kebele VARCHAR(30),
-    CONSTRAINT PK_Teacher PRIMARY KEY (Teacher_ID)
+    CONSTRAINT PK_T PRIMARY KEY (Teacher_ID)
 );
 
+drop table Teacher_data.Teacher
 -- table 14: list of teachers' phone number
 
-CREATE TABLE Teacher_phone (
+CREATE TABLE Teacher_data.Teacher_phone (
     Teacher_ID VARCHAR(10),
     Phone_number varchar(20),
     CONSTRAINT PK_Teacher_phone PRIMARY KEY (Teacher_ID),
-    CONSTRAINT FK_Teacher FOREIGN KEY (Teacher_ID) REFERENCES Teacher_list(Teacher_ID)
+    CONSTRAINT FK_Teacher FOREIGN KEY (Teacher_ID) REFERENCES Teacher_data.Teacher(Teacher_ID)
 );
 
 -- table 15: assigning Teachers on on to Grade levels
@@ -296,7 +305,7 @@ CREATE TABLE Teacher_Section_Subject (
   Section_code VARCHAR(6),
   Subject_code VARCHAR(6),
   CONSTRAINT PK_TSS PRIMARY KEY (Assign_ID),
-  CONSTRAINT FK_TSS_Teacher FOREIGN KEY (Teacher_ID) REFERENCES Teacher_list(Teacher_ID),
+  CONSTRAINT FK_TSS_Teacher FOREIGN KEY (Teacher_ID) REFERENCES Teacher_data.Teacher(Teacher_ID),
   CONSTRAINT FK_TSS_Subject FOREIGN KEY (Subject_code) REFERENCES Subject_list(Subject_code),
   CONSTRAINT FK_TSS_Section FOREIGN KEY (Section_code) REFERENCES Section_list(Section_code)
 );
@@ -332,7 +341,7 @@ CREATE TABLE Class_schedule (
     CONSTRAINT FK_Class_schedule_Grade_level FOREIGN KEY (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID),
     CONSTRAINT FK_Class_schedule_Section FOREIGN KEY (Section_code) REFERENCES Section_list(Section_code),
     CONSTRAINT FK_Class_schedule_Subject FOREIGN KEY (Subject_code) REFERENCES Subject_list(Subject_code),
-    CONSTRAINT Fk_Class_schedule_Teacher FOREIGN KEY (Teacher_ID) REFERENCES Teacher_list(Teacher_ID)
+    CONSTRAINT Fk_Class_schedule_Teacher FOREIGN KEY (Teacher_ID) REFERENCES Teacher_data.Teacher(Teacher_ID)
 );
 
 drop table Class_schedule
@@ -408,7 +417,7 @@ CREATE TABLE Staff_Phone (
 
 -- inserting values for Table 1
 
-INSERT INTO Parent_list (PID_no, F_name, L_name, M_name, Gender, Birth_date, Age, Relation, Sub_city, Kebele)
+INSERT INTO Stud_data.Parent (PID_no, F_name, L_name, M_name, Gender, Birth_date, Age, Relation, Sub_city, Kebele)
 VALUES ('BDR001', 'Abebe', 'Shiferaw', 'Abiy', 'Male', '1980-01-01', 41, 'Father', 'Tana', 'Kebele 1'),
        ('BDR002', 'Almi', 'Desalegn', 'Abrham', 'Female', '1985-03-15', 36, 'Mother', 'Facilo', 'Kebele 1'),
        ('BDR003', 'Wohy', 'Workie', 'Jemal', 'Male', '1975-05-20', 46, 'Father', 'Gish Abay', 'Kebele 2'),
@@ -419,7 +428,7 @@ VALUES ('BDR001', 'Abebe', 'Shiferaw', 'Abiy', 'Male', '1980-01-01', 41, 'Father
 
 
 -- check
--- SELECT * FROM Parent_list
+-- SELECT * FROM Stud_data.Parent
 
 -- inserting values for Table 2
 
@@ -438,7 +447,7 @@ VALUES ('BDR001', '+251 911 123 461'),
        ('BDR006', '+251 911 123 473');
 -- check
 -- SELECT * FROM Parent_phone
--- SELECT * FROM Parent_list JOIN Parent_phone ON Parent_list.PID_no = Parent_phone.PID_no;
+-- SELECT * FROM Stud_data.Parent JOIN Parent_phone ON Stud_data.Parent.PID_no = Parent_phone.PID_no;
 
 
 -- inserting values for Table 3
@@ -470,7 +479,7 @@ VALUES ('9A', 'gid9'),
 -- SELECT distinct * FROM Section_list JOIN Grade_level_list ON Section_list.Grade_level_ID = Grade_level_list.Grade_level_ID;
 
 -- inserting values for Table 5
-INSERT INTO Student_list (Stud_ID, F_name, L_name, M_name, Gender, Birth_date, Age, Sub_city, Kebele, PID_no, Grade_level_ID, Section_code) 
+INSERT INTO Stud_data.Student (Stud_ID, F_name, L_name, M_name, Gender, Birth_date, Age, Sub_city, Kebele, PID_no, Grade_level_ID, Section_code) 
 VALUES ('ST00001', 'Habtsh','Shiferaw','Alemu', 'female', '2005-01-01', 18, 'Tana', 'Kebele 1', 'BDR001','GID11', '11A'),
        ('ST00002', 'Bezabh','Bogale', 'Desalegn', 'Male', '2005-03-15', 18, 'Facilo', 'Kebele 1', 'BDR002', 'GID11', '11B'),
        ('ST00003', 'Gebrie','Wohy', 'Workie', 'Male', '2007-05-20', 16, 'Gish Abay', 'Kebele 2', 'BDR003', 'GID9', '9A'),
@@ -479,7 +488,7 @@ VALUES ('ST00001', 'Habtsh','Shiferaw','Alemu', 'female', '2005-01-01', 18, 'Tan
        ('ST00006', 'Tiruaynet','Selameneh', 'Ayenew', 'Female', '2006-11-22', 17, 'Atse Tewodros', 'Kebele 3', 'BDR006', 'GID10', '12A');
 
 -- cheack
--- SELECT * FROM Student_list
+-- SELECT * FROM Stud_data.Student
        SELECT * FROM Subject_list
 -- for Table 6
 
@@ -712,7 +721,7 @@ VALUES
 -- select * from Roaster_list
 
 -- for Table 
-INSERT INTO Teacher_list (Teacher_ID, F_name, L_name, M_name, Gender, Birth_date, Age, Degree_level, Sub_city, Kebele)
+INSERT INTO Teacher_data.Teacher (Teacher_ID, F_name, L_name, M_name, Gender, Birth_date, Age, Degree_level, Sub_city, Kebele)
 VALUES ('T001', 'Abdi', 'Mohammed', 'Alemu', 'Male', '1980-01-01', 41, 'Degree', 'Facilo', 'Kebele 4'),
        ('T002', 'Roman', 'Bealu', 'Girma', 'Female', '1985-03-15', 36, 'Master', 'Tana', 'Kebele 13'),
        ('T003', 'Yesewku', 'Ewunetu', 'Manyazewal', 'Male', '1975-05-20', 46, 'Degree', 'Gish Abay', 'Kebele 3'),
@@ -721,7 +730,7 @@ VALUES ('T001', 'Abdi', 'Mohammed', 'Alemu', 'Male', '1980-01-01', 41, 'Degree',
        ('T006', 'Tangut', 'Kasa', 'Gondere', 'Female', '1973-11-22', 48, 'Degree', 'Atse Tewodros', 'Kebele 14');
 
   -- check
-  -- SELECT * FROM Teacher_list
+  -- SELECT * FROM Teacher_data.Teacher
 
 -- for Table
 

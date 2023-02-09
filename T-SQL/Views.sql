@@ -89,12 +89,12 @@ GO
             Grade_level_list.Grade_level_ID,
             Grade_level_list.Grade_level_name,
             Section_list.Section_Code,
-            Student_list.Stud_ID,
-            Student_list.Gender
+            Stud_data.Student.Stud_ID,
+            Stud_data.Student.Gender
     FROM Roaster_list
     LEFT JOIN Grade_level_list ON Roaster_list.Grade_level_ID = Grade_level_list.Grade_level_ID
     LEFT JOIN Section_list ON Grade_level_list.Grade_level_ID = Section_list.Grade_level_ID
-    LEFT JOIN Student_list ON Section_list.Section_code = Student_list.Section_code
+    LEFT JOIN Stud_data.Student ON Section_list.Section_code = Stud_data.Student.Section_code
 GO
 
 -- view 6 
@@ -130,17 +130,17 @@ GO
     SELECT  Transcript.Ac_year,
             Transcript.Stud_ID,
             Transcript.Grade_level_ID,
-            Student_list.F_name,
-            Student_list.L_name,
-            Student_list.M_name,
-            Student_list.Gender,
-            Student_list.Age,
+            Stud_data.Student.F_name,
+            Stud_data.Student.L_name,
+            Stud_data.Student.M_name,
+            Stud_data.Student.Gender,
+            Stud_data.Student.Age,
             Transcript.First_semester_avg,
             Transcript.Second_semester_avg,
             Transcript.Final_avg,
             Transcript.Conduct
     FROM Transcript
-    JOIN Student_list ON Transcript.Stud_ID = Student_list.Stud_ID
+    JOIN Stud_data.Student ON Transcript.Stud_ID = Stud_data.Student.Stud_ID
 GO
 
 SELECT * FROM Report_card

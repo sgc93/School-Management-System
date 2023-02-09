@@ -3,9 +3,9 @@ USE Shumabo_secondary_school
 -- Functionalities
 
 -- Manipulating on Parent Table
--- Functionality 1: Add Parent { with Stored procedure}
+-- Functionality 1: Add new Parent { with Stored procedure}
 GO
-  CREATE PROCEDURE Add_parent (
+  CREATE PROCEDURE Stud_data.Add_parent (
     @PID_no VARCHAR(15),
     @F_Name VARCHAR(50), 
     @L_Name VARCHAR(50),
@@ -19,17 +19,15 @@ GO
 
   AS
   BEGIN 
-    Declare @Age INT
-    SET @Age = 42
-
-    INSERT INTO Parent_list (PID_no, F_name, L_name, M_name, Gender, Birth_date, Age, Relation, Sub_city, Kebele)
-    VALUES (@PID_no, @F_Name, @L_Name, @M_name, @Gender, @Birth_date,  @Age, @Relation, @Sub_city, @Kebele);
+    INSERT INTO Stud_data.Parent (PID_no, F_name, L_name, M_name, Gender, Birth_date, Relation, Sub_city, Kebele)
+    VALUES (@PID_no, @F_Name, @L_Name, @M_name, @Gender, @Birth_date, @Relation, @Sub_city, @Kebele);
   END
 GO
 
-EXEC Add_parent 'BDR007', 'Chernet', 'Abegaz', 'Sewale', 'Male', '2000-01-01', 'Father', 'Gish Abay', 'Kebele 3';
+EXEC Stud_data.Add_parent 'BDR007', 'Chernet', 'Abegaz', 'Sewale', 'Male', '2000-01-01', 'Father', 'Gish Abay', 'Kebele 3';
+EXEC Stud_data.Add_parent 'BDR008', 'Tsega', 'Abera', 'Wakene', 'Male', '1988-01-01', 'Father', 'Atse Tewodros', 'Kebele 3';
 
--- Functionality 2: Display all with Table valued function
+-- Functionality 2: Display data of specific parent
 
 GO
   CREATE FUNCTION Get_parent (@PID_no VARCHAR(15))
@@ -38,22 +36,22 @@ GO
   RETURN 
   (
     SELECT *
-    FROM Parent_list
+    FROM Stud_data.Parent
     WHERE PID_no = @PID_no
   );
 GO
 
-SELECT * FROM dbo.Get_Parent('BDR001')
+SELECT * FROM dbo.Get_Parent('BDR007')
 
 -- Functionality 3: Update specific Information of a specified Parent
 GO
-  CREATE PROCEDURE Update_parent (@PID_no VARCHAR(10), @Attribute_name NVARCHAR(50), @New_value sql_variant)
+  CREATE PROCEDURE Stud_data.Update_parent (@PID_no VARCHAR(10), @Attribute_name NVARCHAR(50), @New_value sql_variant)
   AS
   BEGIN
     SET NOCOUNT ON;
     DECLARE @SQL NVARCHAR(MAX)
 
-    SET @SQL = N'UPDATE Parent_list SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE PID_no = ' + '''' + @PID_no + ''''
+    SET @SQL = N'UPDATE Stud_data.Parent SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE PID_no = ' + '''' + @PID_no + ''''
     EXECUTE sp_executesql @SQL
   END
 GO
@@ -68,7 +66,7 @@ GO
     The purpose of using NVARCHAR(MAX) in the stored procedure 
     is to allow the input value to be passed as a string, 
     and then converted to the correct data type for the targeted
-    column in the Parent_list table.
+    column in the Stud_data.Parent table.
 
     sp_executesql is a system stored procedure in SQL Server that 
     is used to execute a dynamically constructed SQL statement or batch.
@@ -92,16 +90,18 @@ GO
     the SQL_VARIANT data type also has some limitations, such as less efficient 
     data storage and lower performance compared to using specific data types.
     */
-EXEC Update_parent 'BDR001', 'Relation', 'Uncle'
-EXEC Update_parent 'BDR001', 'Birth_date', '1981-01-01'
-EXEC Update_parent 'BDR001', 'PID_no', 'BDR000'  -- cannot update the PID_no of any parent since its concerns with referential integrity.
+EXEC Stud_data.Update_parent 'BDR007', 'Sub_city', 'Shumabo'
+EXEC Stud_data.Update_parent 'BDR001', 'Birth_date', '1981-01-01'
+EXEC Stud_data.Update_parent 'BDR001', 'PID_no', 'BDR000'  -- cannot update the PID_no of any parent since its concerns with referential integrity.
 
 
--- Manupulating on table Student_list
+-- Manupulating on table Stud_data.Student
 -- Functionality 4: Register new student
 
 GO
-  CREATE PROCEDURE Add_new_student (
+  CREATE PROCEDURE Stud_data.Add_new_student (
+    @Ac_Year INT,
+    @Registration_data DATE,
     @Stud_ID VARCHAR(10),
     @F_Name VARCHAR(50), 
     @L_Name VARCHAR(50),
@@ -110,31 +110,43 @@ GO
     @Birth_date DATE,
     @Sub_city VARCHAR(50),
     @Kebele VARCHAR(50),
-    @Grade_level_ID VARCHAR(6), 
-    @Section_code VARCHAR(6)
+    @PID_no VARCHAR(15)
   )
   AS
   BEGIN
-    Declare @Age int
-    Declare @PID_no VARCHAR(15)
-    SET @Age = 22
-    SET @PID_no = 'BDR007'
-    INSERT INTO Student_list (Stud_ID, F_name, L_name, M_name, Gender, Birth_date, Age, Sub_city, Kebele, PID_no, Grade_level_ID, Section_code)
-    VALUES(@Stud_ID, @F_Name, @L_Name, @M_name, @Gender, @Birth_date,  @Age, @Sub_city, @Kebele, @PID_no, @Grade_level_ID, @Section_code);
+    INSERT INTO Stud_data.New_Student (Ac_year, Registration_date, Stud_ID, F_name, L_name, M_name, Gender, Birth_date, Sub_city, Kebele, PID_no)
+    VALUES(@Ac_Year, @Registration_data, @Stud_ID, @F_Name, @L_Name, @M_name, @Gender, @Birth_date, @Sub_city, @Kebele, @PID_no);
   END
 GO
 
-EXEC Add_new_student 'ST0008', 'Alemayehu', 'Chernet', 'Abegaz', 'Male', '2000-01-01', 'Gish Abay', 'Kebele 3', 'GID12', '12A';
+EXEC Stud_data.Add_new_student 2023, '2023-08-03', 'ST0008', 'Alemayehu', 'Chernet', 'Abegaz', 'Male', '2000-01-01', 'Shumabo', 'Kebele 3', 'BDR007' ;
+EXEC Stud_data.Add_new_student 2023, '2023-08-03', 'ST0009', 'Chaltu', 'Tsega', 'Abera', 'female', '2000-02-03', 'Atse Tewodros', 'Kebele 3', 'BDR008' ;
 
+-- Functionality 5: Update a specified information of specified student
 
--- Functionality 5: Display a specified Student information // with stored procedure
+GO
+  CREATE PROCEDURE Stud_data.Update_Student (@Stud_ID VARCHAR(15), @Attribute_name NVARCHAR(50), @New_value sql_variant)
+  AS
+  BEGIN
+    SET NOCOUNT ON;
+    DECLARE @SQL NVARCHAR(MAX)
+
+    SET @SQL = N'UPDATE Stud_data.Student SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE Stud_ID = ' + '''' + @Stud_ID + ''''
+    EXECUTE sp_executesql @SQL
+  END
+GO
+
+EXEC Stud_data.Update_Student 'ST0009', 'Grade_level_Id', 'GID11'
+EXEC Stud_data.Update_Student 'ST0009', 'Section_code', '11A'
+
+-- Functionality 6: Display a specified Student information // with stored procedure
 -- without phone number
 GO
   CREATE PROCEDURE Display_student (@Stud_ID VARCHAR(10))
   AS
   BEGIN
     SELECT *
-    FROM Student_list
+    FROM Stud_data.Student
     WHERE Stud_ID = @Stud_ID
   END
 GO
@@ -159,9 +171,9 @@ GO
     s.Section_code,
     sp.phone_number
   FROM 
-    Student_list s 
+    Stud_data.Student s 
   INNER JOIN 
-    Student_phone sp ON s.Stud_ID = sp.Stud_ID
+    Stud_data.Student_phone sp ON s.Stud_ID = sp.Stud_ID
   WHERE 
     s.Stud_ID = @Stud_ID
  END
@@ -169,22 +181,6 @@ GO
 
 EXEC show_Student 'ST00001'  -- With there phone number
 EXEC Display_student 'ST0008'  -- without phone number
-
--- Functionality 6: Update a specified information of specified student
-
-GO
-  CREATE PROCEDURE Update_Student (@Stud_ID VARCHAR(15), @Attribute_name NVARCHAR(50), @New_value sql_variant)
-  AS
-  BEGIN
-    SET NOCOUNT ON;
-    DECLARE @SQL NVARCHAR(MAX)
-
-    SET @SQL = N'UPDATE Student_list SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE Stud_ID = ' + '''' + @Stud_ID + ''''
-    EXECUTE sp_executesql @SQL
-  END
-GO
-
-EXEC Update_Student 'ST0008', 'F_name', 'Negaso'
 
 -- Manipulating on table Subject_list
 -- Functionality 7: Add new subject
@@ -416,18 +412,17 @@ GO
 EXEC Dispaly_Transform_form 'ST00001'
 
 
--- Manipulating the Teacher_list table
+-- Manipulating the Teacher_data.Teacher table
 
 -- Functionality 19: Add Teacher { with Stored procedure}
 GO
-  CREATE PROCEDURE Add_Teacher (
+  CREATE PROCEDURE Teacher_data.Add_Teacher (
     @Teacher_ID VARCHAR(15),
     @F_Name VARCHAR(50), 
     @L_Name VARCHAR(50),
     @M_Name VARCHAR(50),
     @Gender VARCHAR(10),
     @Birth_date DATE,
-    @Age INT,
     @Degree_level VARCHAR(255),
     @Sub_city VARCHAR(255),
     @Kebele VARCHAR(255)
@@ -435,12 +430,13 @@ GO
 
   AS
   BEGIN 
-    INSERT INTO Teacher_list (Teacher_ID, F_name, L_name, M_name, Gender, Birth_date, Age, Degree_level, Sub_city, Kebele)
-    VALUES (@Teacher_ID, @F_Name, @L_Name, @M_name, @Gender, @Birth_date,  @Age, @Degree_level, @Sub_city, @Kebele);
+    INSERT INTO Teacher_data.Teacher (Teacher_ID, F_name, L_name, M_name, Gender, Birth_date, Degree_level, Sub_city, Kebele)
+    VALUES (@Teacher_ID, @F_Name, @L_Name, @M_name, @Gender, @Birth_date, @Degree_level, @Sub_city, @Kebele);
   END
 GO
 
-EXEC Add_Teacher 'T007', 'Bewketu', 'Sewmehon', 'gash Takele', 'Male', '1980-01-01',35, 'Master', 'Gish Abay', 'Kebele 3';
+drop PROCEDURE Teaacher_data.Add_Teacher
+EXEC Teacher_data.Add_Teacher 'T007', 'Bewketu', 'Sewmehon', 'gash Takele', 'Male', '1980-01-01', 'Master', 'Gish Abay', 'Kebele 3';
 
 -- Functionality 20: Display a specific teacher's information with Table valued function
 
@@ -451,7 +447,7 @@ GO
   RETURN 
   (
     SELECT *
-    FROM Teacher_list
+    FROM Teacher_data.Teacher
     WHERE Teacher_ID = @Teacher_ID
   );
 GO
@@ -460,18 +456,18 @@ SELECT * FROM dbo.Get_Teacher('T007')
 
 -- Functionality 21: Update specific Information of a specified Teacher
 GO
-  CREATE PROCEDURE Update_Teacher (@Teacher_ID VARCHAR(10), @Attribute_name NVARCHAR(50), @New_value sql_variant)
+  CREATE PROCEDURE Teacher_data.Update_Teacher (@Teacher_ID VARCHAR(10), @Attribute_name NVARCHAR(50), @New_value sql_variant)
   AS
   BEGIN
     SET NOCOUNT ON;
     DECLARE @SQL NVARCHAR(MAX)
 
-    SET @SQL = N'UPDATE Teacher_list SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE Teacher_ID = ' + '''' + @Teacher_ID + ''''
+    SET @SQL = N'UPDATE Teacher_data.Teacher SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE Teacher_ID = ' + '''' + @Teacher_ID + ''''
     EXECUTE sp_executesql @SQL
   END
 GO
 
-EXEC Update_Teacher 'T007', 'M_name', 'Takele'
+EXEC Teacher_data.Update_Teacher 'T007', 'M_name', 'Takele'
 
 -- Assigning teachers to specific Grade level , displaying the assignment and updating the assignment
 -- Functionlity 22: Assignign a particular teacher to specific Grade_level
@@ -837,17 +833,17 @@ GO
       SET @Number_of_student = (SELECT COUNT(DISTINCT Stud_ID) FROM Grade_level_data WHERE Grade_level_ID = @Grade_level_ID AND Ac_year = @Ac_year )
       SET @Number_of_male_stud = (SELECT COUNT(DISTINCT Stud_ID) FROM Grade_level_data WHERE Grade_level_data.Gender = 'male' AND Grade_level_data.Grade_level_ID = @Grade_level_ID AND Grade_level_data.Ac_year = @Ac_year )
       SET @Number_of_female_stud = (@Number_of_student - @Number_of_male_stud)
-      SET @Number_of_passed_stud = (SELECT COUNT(Stud_status) FROM Pass_fail_Student WHERE Stud_status = 'passed' AND Pass_fail_Student.Grade_level_ID = @Grade_level_ID AND Pass_fail_Student.Ac_year = @Ac_Year)
-      SET @Number_of_failed_stud = (SELECT COUNT(Stud_status) FROM Pass_fail_Student WHERE Stud_status = 'failed' AND Pass_fail_Student.Grade_level_ID = @Grade_level_ID AND Pass_fail_Student.Ac_year = @Ac_Year)
+      SET @Number_of_passed_stud = (SELECT COUNT(Stud_status) FROM Stud_data.Pass_fail_student WHERE Stud_status = 'passed' AND Stud_data.Pass_fail_student.Grade_level_ID = @Grade_level_ID AND Stud_data.Pass_fail_student.Ac_year = @Ac_Year)
+      SET @Number_of_failed_stud = (SELECT COUNT(Stud_status) FROM Stud_data.Pass_fail_student WHERE Stud_status = 'failed' AND Stud_data.Pass_fail_student.Grade_level_ID = @Grade_level_ID AND Stud_data.Pass_fail_student.Ac_year = @Ac_Year)
       SET @Passed_stud_percentage = (@Number_of_passed_stud / (@Number_of_passed_stud + @number_of_failed_stud)) * 100
-      SET @Number_of_passed_male_stud = (SELECT COUNT(Stud_status) FROM Pass_fail_Student WHERE Stud_status = 'passed' AND Gender = 'male' AND Pass_fail_Student.Grade_level_ID = @Grade_level_ID AND Pass_fail_Student.Ac_year = @Ac_Year)
+      SET @Number_of_passed_male_stud = (SELECT COUNT(Stud_status) FROM Stud_data.Pass_fail_student WHERE Stud_status = 'passed' AND Gender = 'male' AND Stud_data.Pass_fail_student.Grade_level_ID = @Grade_level_ID AND Stud_data.Pass_fail_student.Ac_year = @Ac_Year)
       SET @Passed_male_percentage = (@Number_of_passed_male_stud / (@Number_of_passed_male_stud + @Number_of_passed_female_stud)) * 100
-      SET @Number_of_passed_female_stud = (SELECT COUNT(Stud_status) FROM Pass_fail_Student WHERE Stud_status = 'passed' AND Gender = 'female' AND Pass_fail_Student.Grade_level_ID = @Grade_level_ID AND Pass_fail_Student.Ac_year = @Ac_Year)
+      SET @Number_of_passed_female_stud = (SELECT COUNT(Stud_status) FROM Stud_data.Pass_fail_student WHERE Stud_status = 'passed' AND Gender = 'female' AND Stud_data.Pass_fail_student.Grade_level_ID = @Grade_level_ID AND Stud_data.Pass_fail_student.Ac_year = @Ac_Year)
       SET @Passed_female_percentage = (@Number_of_passed_female_stud / (@Number_of_passed_female_stud + @Number_of_passed_female_stud)) * 100
       SET @Failed_stud_percentage = (@Number_of_passed_stud / (@Number_of_passed_stud + @number_of_failed_stud)) * 100
-      SET @Number_of_failed_male_stud = (SELECT COUNT(Stud_status) FROM Pass_fail_Student WHERE Stud_status = 'failed' AND Gender = 'male' AND Pass_fail_Student.Grade_level_ID = @Grade_level_ID AND Pass_fail_Student.Ac_year = @Ac_Year)
+      SET @Number_of_failed_male_stud = (SELECT COUNT(Stud_status) FROM Stud_data.Pass_fail_student WHERE Stud_status = 'failed' AND Gender = 'male' AND Stud_data.Pass_fail_student.Grade_level_ID = @Grade_level_ID AND Stud_data.Pass_fail_student.Ac_year = @Ac_Year)
       SET @Failed_male_percentage = (@Number_of_failed_male_stud / (@Number_of_failed_male_stud + @Number_of_failed_female_stud)) * 100
-      SET @Number_of_failed_female_stud = (SELECT COUNT(Stud_status) FROM Pass_fail_Student WHERE Stud_status = 'failed' AND Gender = 'female' AND Pass_fail_Student.Grade_level_ID = @Grade_level_ID AND Pass_fail_Student.Ac_year = @Ac_Year)
+      SET @Number_of_failed_female_stud = (SELECT COUNT(Stud_status) FROM Stud_data.Pass_fail_student WHERE Stud_status = 'failed' AND Gender = 'female' AND Stud_data.Pass_fail_student.Grade_level_ID = @Grade_level_ID AND Stud_data.Pass_fail_student.Ac_year = @Ac_Year)
       SET @Failed_female_percentage = (@Number_of_passed_female_stud / (@Number_of_passed_female_stud + @Number_of_passed_female_stud)) * 100
       SET @Max_avg = (SELECT MAX(Final_avg) FROM Transcript WHERE Grade_level_ID = @Grade_level_ID AND Ac_year = @Ac_year)
       SET @Min_avg = (SELECT MIN(Final_avg) FROM Transcript WHERE Grade_level_ID = @Grade_level_ID AND Ac_year = @Ac_year) 
@@ -886,7 +882,6 @@ GO
 
 EXEC  Shumabo.Remove_progress_report '2023', 'GID11'
 
-
 -- list of students based of academical status like passed, failed and dropout
 -- Functionality 44: Recording passed and failed students (trigger 5)
 
@@ -897,12 +892,60 @@ GO
   RETURNS TABLE
   AS
   RETURN (
-    SELECT * FROM Pass_fail_Student
+    SELECT * FROM Stud_data.Pass_fail_student
     WHERE Stud_ID =  @Stud_ID AND @Ac_Year = Ac_year
   )
 GO
 
 SELECT * FROM dbo.Get_Stud_status('ST00003', '2022')
+
+-- operating on the non_attendat table
+-- functionality  : withdraw a student from the lise
+
+GO
+  CREATE PROCEDURE Stud_data.Withdraw_student(@Ac_Year INT, @Stud_ID VARCHAR(10))
+  AS
+  BEGIN
+    IF EXISTS (Select * from Stud_data.Student WHERE Ac_year = @Ac_year AND Stud_ID = @Stud_ID)
+      BEGIN
+        DELETE FROM Stud_data.Student
+        WHERE Ac_year = @Ac_Year AND Stud_ID = @Stud_ID
+      END
+    ELSE
+      BEGIN
+        RAISERROR('There is no student with you specification, please be sure about you are trying to operate on the existing student.', 16, 1)
+        ROLLBACK
+      END
+  END
+GO
+
+EXEC Stud_data.Withdraw_student '2023', 'ST0009'
+
+SELECT * from Stud_data.Non_attendant
+
+-- Functionality : Update the withdrew students | add reason and leave_date
+
+GO
+  CREATE PROCEDURE Stud_data.Update_Non_attendant (@Ac_Year INT, @Stud_ID VARCHAR(10), @Reason TEXT, @leave_date DATE)
+  AS
+  BEGIN
+    IF EXISTS (SELECT * FROM Stud_data.Non_attendant WHERE Ac_year = @Ac_Year AND Stud_ID = @Stud_ID)
+      BEGIN
+        UPDATE Stud_data.Non_attendant
+        SET Reason = @Reason, 
+            Leave_date = @leave_date
+        WHERE Ac_year = @Ac_Year and Stud_Id = @Stud_ID
+      END
+    ELSE
+      BEGIN
+        RAISERROR('The is no one in the withdrawn list with your specification.', 16,1)
+        ROLLBACK
+      END
+  END
+GO
+
+EXEC Stud_data.Update_Non_attendant 2023, 'ST0008', 'Health case', '2023-08-07' 
+EXEC Stud_data.Update_Non_attendant 2023, 'ST0009', 'Transfer to other school', '2023-01-23' 
 
 -- Generating, displaying and updating class schedule
 -- functionality 46: store class schedule

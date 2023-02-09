@@ -93,21 +93,64 @@ GO
 GO
 
 -- Trigger 4
+-- add New studetns to student list
+
+GO
+	CREATE TRIGGER Stud_data.tr_add_new_student_to_all_Student
+	ON Stud_data.New_Student
+	AFTER INSERT
+	AS
+	BEGIN
+		DECLARE 
+			@Ac_Year INT,
+    		@Stud_ID VARCHAR(10),
+    		@F_Name VARCHAR(50), 
+    		@L_Name VARCHAR(50),
+    		@M_Name VARCHAR(50),
+    		@Gender VARCHAR(6),
+    		@Birth_date DATE,
+    		@Sub_city VARCHAR(50),
+    		@Kebele VARCHAR(50),
+    		@PID_no VARCHAR(15)
+		SELECT 	
+			@Ac_Year = Ac_Year,
+    		@Stud_ID = Stud_ID,
+    		@F_Name = F_name, 
+    		@L_Name = L_name,
+    		@M_Name = M_name,
+    		@Gender = Gender,
+    		@Birth_date = Birth_date,
+    		@Sub_city = Sub_city,
+    		@Kebele = Kebele,
+    		@PID_no = PId_no
+		FROM inserted
+
+		IF NOT EXISTS (SELECT * FROM Stud_data.Student WHERE Stud_ID = @Stud_ID AND Ac_year = @Ac_Year)  -- if the added items not exist in the All_Item table
+			BEGIN
+    			INSERT INTO Stud_data.Student (Ac_year, Stud_ID, F_name, L_name, M_name, Gender, Birth_date, Sub_city, Kebele, PID_no)
+    			VALUES(@Ac_Year, @Stud_ID, @F_Name, @L_Name, @M_name, @Gender, @Birth_date, @Sub_city, @Kebele, @PID_no);
+  			END
+	END
+GO
+
+-- Trigger 5
 -- Functionality  : store the information of the withdrew students
 
 GO
-	CREATE TRIGGER tr_Set_Withdraw
-	ON Student_list
+	CREATE TRIGGER Stud_data.tr_Set_Withdraw
+	ON Stud_data.Student
 	AFTER DELETE
 	AS
 	BEGIN
 		DECLARE 
+		    @Ac_year INT,
 			@Stud_ID VARCHAR(10),				
 			@Grade_level_ID VARCHAR(10),
 			@Section_code VARCHAR(6),
 			@Gender VARCHAR(10),
 			@Stud_status VARCHAR(20)
 		SELECT 	
+			@Ac_year = Ac_year,
 			@Stud_ID = Stud_ID,
 			@Grade_level_ID = Grade_level_ID,
 			@Section_code = Section_code,
@@ -115,16 +158,16 @@ GO
 		FROM deleted
 		SET @Stud_status = 'Withdrew'
 
-		INSERT INTO Non_attendant (Stud_ID, Grade_level_ID, Section_code, Gender, Stud_status)
-		VALUES (@Stud_ID, @Grade_level_ID, @Section_code, @Gender, @Stud_status)
-		PRINT 'student has withdrew, fill some data about the withdran student'
+		INSERT INTO Stud_data.Non_attendant (Ac_year, Stud_ID, Grade_level_ID, Section_code, Gender, Stud_status)
+		VALUES (@Ac_year, @Stud_ID, @Grade_level_ID, @Section_code, @Gender, @Stud_status)
+		PRINT 'student has withdrew, fill some data about the withdrawn student'
 	END
 GO
 -- Trigger 5
 -- functionality  : store the last status (passed or failed) of students
 
 GO
-	CREATE TRIGGER tr_Set_stud_status
+	CREATE TRIGGER Stud_data.tr_Set_stud_status
 	ON Transcript
 	AFTER INSERT
 	AS
@@ -146,9 +189,9 @@ GO
 			@Grade_level_ID = Grade_level_ID,
 			@Section_code = Section_code,
 			@Gender = Gender
-		FROM Student_list WHERE Stud_ID = @Stud_ID
+		FROM Stud_data.Student WHERE Stud_ID = @Stud_ID
 
-		IF EXISTS (SELECT * FROM Pass_fail_Student WHERE Ac_year = @Ac_year AND Stud_ID = @Stud_ID)
+		IF EXISTS (SELECT * FROM Stud_data.Pass_fail_student WHERE Ac_year = @Ac_year AND Stud_ID = @Stud_ID)
 			BEGIN
 				RAISERROR('try to set a status for the same studetn.', 12,3)
 				ROLLBACK
@@ -158,13 +201,13 @@ GO
 				IF @final_avg >= 48
 					BEGIN
 			 			SET @Stud_status = 'Passed'
-			 			INSERT INTO Pass_fail_Student (Ac_Year, Stud_ID, Grade_level_Id, Section_code, Gender, Final_avg, Stud_status)
+			 			INSERT INTO Stud_data.Pass_fail_student (Ac_Year, Stud_ID, Grade_level_Id, Section_code, Gender, Final_avg, Stud_status)
 			 			VALUES (@Ac_Year, @Stud_ID, @Grade_level_ID, @Section_code, @Gender, @final_avg,  @Stud_status)
 					END
 				ELSE
 					BEGIN
 			 			SET @Stud_status = 'Failed'
-			 			INSERT INTO Pass_fail_Student (Ac_Year, Stud_ID, Grade_level_Id, Section_code, Gender, Final_avg, Stud_status)
+			 			INSERT INTO Stud_data.Pass_fail_student (Ac_Year, Stud_ID, Grade_level_Id, Section_code, Gender, Final_avg, Stud_status)
 			 			VALUES (@Ac_Year, @Stud_ID, @Grade_level_ID, @Section_code, @Gender, @final_avg,  @Stud_status)
 					END
 				PRINT 'Student status is set.'

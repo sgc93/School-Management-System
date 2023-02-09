@@ -41,3 +41,6 @@ GO
 GO
     CREATE Login Security_Admin WITH PASSWORD = 'secadmin1234'
 GO
+
+
+drop table Teacher_list

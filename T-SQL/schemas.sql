@@ -48,6 +48,9 @@ GO
     CREATE SCHEMA Stud_data AUTHORIZATION AlemGezi
  GO
 
+ -- Authorizing Teachers' data
+    CREATE SCHEMA Teacher_data AUTHORIZATION AlemGezi
+ GO
 -- Authorizing staffs' data
     
     CREATE SCHEMA Staff_data AUTHORIZATION AlemGezi

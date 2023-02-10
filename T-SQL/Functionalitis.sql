@@ -645,28 +645,27 @@ EXEC Shumabo.Delete_Yearly_Calendar '2020'
 -- Functionlity 33: Add Data of new staff members like director, Record_Officer, ...
 
 GO
-  CREATE PROCEDURE Add_New_Staff(
+  CREATE PROCEDURE Staff_data.Add_New_Staff(
   @Staff_ID VARCHAR(10),
   @F_name VARCHAR(50),
   @L_name VARCHAR(50),
   @M_name VARCHAR(50),
   @Gender VARCHAR(8),
   @Birth_date DATE,
-  @Age INT,
   @Degree_level VARCHAR(50),
   @Staff_role VARCHAR(50),
   @Sub_city VARCHAR(50),
   @Kebele VARCHAR(50))
   AS
   BEGIN
-    INSERT INTO Staff(Staff_ID, F_name, L_name, M_name, Gender, Birth_date, Age, Degree_level, Staff_role, Sub_city, Kebele)
-    VALUES (@Staff_ID, @F_name, @L_name, @M_name, @Gender, @Birth_date, @Age, @Degree_level, @Staff_role, @Sub_city, @Kebele)
+    INSERT INTO Staff(Staff_ID, F_name, L_name, M_name, Gender, Birth_date, Degree_level, Staff_role, Sub_city, Kebele)
+    VALUES (@Staff_ID, @F_name, @L_name, @M_name, @Gender, @Birth_date, @Degree_level, @Staff_role, @Sub_city, @Kebele)
     PRINT 'You have added new Staff member Successfully.'
   END
 GO
 
-EXEC Add_New_Staff 'STA002','R-memihr', 'Mesafint', 'Tefera','Male', '1980-04-12', '43', 'Master', 'Director', 'Gish Abay', 'Kebele 5'
-
+EXEC Staff_data.Add_New_Staff 'STA002','R-memihr', 'Mesafint', 'Tefera','Male', '1980-04-12', 'Master', 'Director', 'Gish Abay', 'Kebele 5'
+select * from Staff_data.Staff
 -- Functionality 34: Display the Data of specific Staff member
 
 GO

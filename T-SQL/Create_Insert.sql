@@ -244,18 +244,7 @@ CREATE TABLE Stud_data.Non_attendant (
 
 -- table 13: list of all teachers
 
-CREATE TABLE Teacher_data.Teacher (
-    Teacher_ID VARCHAR(10) NOT NULL,
-    F_name VARCHAR(50),
-    L_name VARCHAR(50),
-    M_name VARCHAR(50),
-    Gender VARCHAR(8),
-    Birth_date DATE,
-    Degree_level VARCHAR(30),
-    Sub_city VARCHAR(30),
-    Kebele VARCHAR(30),
-    CONSTRAINT PK_T PRIMARY KEY (Teacher_ID)
-);
+
 
 drop table Teacher_data.Teacher
 -- table 14: list of teachers' phone number

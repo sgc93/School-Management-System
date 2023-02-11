@@ -113,3 +113,45 @@ USE Shumabo_secondary_school
     GO
 
     REVOKE ALTER ON SCHEMA::[dbo] FROM [AlemGezi];
+
+
+    -- For user Abiy | user for login Unit_leader
+
+ -- Grant CREATE TABLE permission to Abiy on Assignment schema
+    -- grant creating
+    GO
+        GRANT CREATE TABLE 
+        TO Abiy
+    GO
+    
+    -- grant selecting tables from schema dbo
+    GRANT SELECT 
+    ON schema::[dbo] 
+    TO [Abiy];
+
+ -- Grant EXECUTE permission to Abiy on Assignment schema
+    
+    GO
+        GRANT EXECUTE 
+        ON SCHEMA::Assignment 
+        TO Abiy
+    GO
+
+ -- Grant Create Procedre function to Abiy on Assignment schema
+
+    GO
+        Grant CREATE PROCEDURE
+        TO Abiy
+    GO
+ -- Grant CREATE FUNCTION permission to Abiy on Assignment schema
+    
+    GO
+        GRANT CREATE FUNCTION
+        TO Abiy
+    GO
+ -- Grant CREATE TRIGGER permission to Abiy on Assignment schema
+    
+    GO 
+        GRANT CREATE TRIGGER
+        TO Abiy
+    GO

@@ -18,12 +18,12 @@ GO
             Teacher_list.Kebele,
             Teacher_phone.Phone_number,
             Teacher_grade_level.Grade_level_ID,
-            Teacher_Section_Subject.Section_code,
-            Teacher_Section_Subject.Subject_code
+            Assignment.Teacher_section_subject.Section_code,
+            Assignment.Teacher_section_subject.Subject_code
     FROM Teacher_list
 
     LEFT JOIN Teacher_grade_level ON Teacher_list.Teacher_ID = Teacher_grade_level.Teacher_ID
-    LEFT JOIN Teacher_Section_Subject ON Teacher_list.Teacher_ID = Teacher_Section_Subject.Teacher_ID
+    LEFT JOIN Assignment.Teacher_section_subject ON Teacher_list.Teacher_ID = Assignment.Teacher_section_subject.Teacher_ID
     LEFT JOIN Teacher_phone ON Teacher_list.Teacher_ID = Teacher_phone.Teacher_ID
 
 GO
@@ -35,13 +35,13 @@ GO
     CREATE VIEW Subject_Teacher AS
     SELECT  Subject_list.Subject_code AS Subject_code,
             Subject_list.Subject_name AS Subject_name,
-            Teacher_Section_Subject.Section_code AS Section_code,
+            Assignment.Teacher_section_subject.Section_code AS Section_code,
             Subject_list.Grade_level_ID As Grade_level_Id,
-            Teacher_Section_Subject.Teacher_ID AS Teacher_ID,
+            Assignment.Teacher_section_subject.Teacher_ID AS Teacher_ID,
             Teacher_list.F_name AS Teacher_name
     FROM Subject_list
-    LEFT JOIN Teacher_Section_Subject ON Subject_list.Subject_code = Teacher_Section_Subject.Subject_code
-    LEFT JOIN Teacher_list ON Teacher_Section_Subject.Teacher_ID = Teacher_list.Teacher_ID
+    LEFT JOIN Assignment.Teacher_section_subject ON Subject_list.Subject_code = Assignment.Teacher_section_subject.Subject_code
+    LEFT JOIN Teacher_list ON Assignment.Teacher_section_subject.Teacher_ID = Teacher_list.Teacher_ID
 GO
 
 -- view 3
@@ -86,15 +86,15 @@ GO
 GO
     CREATE VIEW  Grade_level_data AS
     SELECT  Roaster_list.Ac_year,
-            Grade_level_list.Grade_level_ID,
-            Grade_level_list.Grade_level_name,
-            Section_list.Section_Code,
+            Assignment.Grade_level.Grade_level_ID,
+            Assignment.Grade_level.Grade_level_name,
+            Assignment.Section.Section_Code,
             Stud_data.Student.Stud_ID,
             Stud_data.Student.Gender
     FROM Roaster_list
-    LEFT JOIN Grade_level_list ON Roaster_list.Grade_level_ID = Grade_level_list.Grade_level_ID
-    LEFT JOIN Section_list ON Grade_level_list.Grade_level_ID = Section_list.Grade_level_ID
-    LEFT JOIN Stud_data.Student ON Section_list.Section_code = Stud_data.Student.Section_code
+    LEFT JOIN Assignment.Grade_level ON Roaster_list.Grade_level_ID = Assignment.Grade_level.Grade_level_ID
+    LEFT JOIN Assignment.Section ON Assignment.Grade_level.Grade_level_ID = Assignment.Section.Grade_level_ID
+    LEFT JOIN Stud_data.Student ON Assignment.Section.Section_code = Stud_data.Student.Section_code
 GO
 
 -- view 6 
@@ -107,7 +107,7 @@ GO
             Class_schedule.Ac_year,
             Class_schedule.Section_code,
             Class_schedule.Grade_level_ID,
-            Grade_level_list.Grade_level_name,
+            Assignment.Grade_level.Grade_level_name,
             Class_schedule.period_no,
             Class_schedule.Subject_code,
             Subject_list.Subject_name,
@@ -117,7 +117,7 @@ GO
             Class_schedule.Start_time,
             Class_schedule.End_time
     FROM Class_schedule
-    LEFT JOIN Grade_level_list ON Class_schedule.Grade_level_ID = Grade_level_list.Grade_level_ID
+    LEFT JOIN Assignment.Grade_level ON Class_schedule.Grade_level_ID = Assignment.Grade_level.Grade_level_ID
     LEFT JOIN Subject_list ON Class_schedule.Subject_code = Subject_list.Subject_code
     LEFT JOIN Teacher_list ON Class_schedule.Teacher_ID = Teacher_list.Teacher_ID
 GO

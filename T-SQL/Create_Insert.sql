@@ -52,7 +52,7 @@ CREATE TABLE Stud_data.Parent_phone (
 
 -- table 3: list of Grade levels namely:- 9th, 10th, 11th and 12th
 
-CREATE TABLE Grade_level_list (
+CREATE TABLE Assignment.Grade_level (
   Grade_level_ID VARCHAR(6) NOT NULL,
   Grade_level_name VARCHAR(6) NOT NULL,
   CONSTRAINT PK_Grade_level PRIMARY KEY (Grade_level_ID)
@@ -60,11 +60,11 @@ CREATE TABLE Grade_level_list (
 
 -- table 4: list of section which belongs to specific grade level and contain students
 
-CREATE TABLE Section_list (
+CREATE TABLE Assignment.Section (
   Section_code VARCHAR(6) NOT NULL,
   Grade_level_ID VARCHAR(6),
   CONSTRAINT PK_Section PRIMARY KEY (Section_code), 
-  CONSTRAINT FK_Section FOREIGN KEY (Grade_level_ID) REFERENCES Grade_level_list (Grade_level_ID)
+  CONSTRAINT FK_Section FOREIGN KEY (Grade_level_ID) REFERENCES Assignment.Grade_level (Grade_level_ID)
 );
 
 -- table 5: list of all new students which registered in each year
@@ -102,11 +102,12 @@ CREATE TABLE Stud_data.Student (
   Section_code VARCHAR(6),
   CONSTRAINT PK_Student PRIMARY KEY (Stud_ID), 
   CONSTRAINT FK_Student_PID FOREIGN KEY (PID_no) REFERENCES Stud_data.Parent(PID_no),
-  CONSTRAINT FK_Student_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID),
-  CONSTRAINT FK_Student_Section FOREIGN KEY (Section_code) REFERENCES Section_list(Section_code)
+  CONSTRAINT FK_Student_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Assignment.Grade_level(Grade_level_ID),
+  CONSTRAINT FK_Student_Section FOREIGN KEY (Section_code) REFERENCES Assignment.Section(Section_code)
   );
-  
--- table 6: list of students' phone number, since we assumed that it will necessary to store more than one phone numbers for each student
+ 
+
+-- table 7: list of students' phone number, since we assumed that it will necessary to store more than one phone numbers for each student
 
 CREATE TABLE Stud_data.Student_phone (
     Stud_ID VARCHAR(10) NOT NULL,
@@ -115,17 +116,17 @@ CREATE TABLE Stud_data.Student_phone (
     CONSTRAINT FK_SPstud FOREIGN KEY (Stud_ID) REFERENCES Stud_data.New_Student(Stud_ID),
 );
 
--- table 7: a table that contains the yearly results of all students
+-- table 8: a table that contains the yearly results of all students
        
-CREATE TABLE Subject_list(
+CREATE TABLE Assignment.Subject(
   Subject_code VARCHAR(6) NOT NULL,
   Subject_name VARCHAR(50) NOT NULL,
   Grade_level_ID VARCHAR(6),
   CONSTRAINT PK_Sub PRIMARY KEY (Subject_code),
-  CONSTRAINT FK_Sub_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID)
+  CONSTRAINT FK_Sub_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Assignment.Grade_level(Grade_level_ID)
 );
 
--- table 8: the transcript list that contains the grade results(marks) of students in differet semester in different year (maximum for 4 years) and each year transcript is identified by the Trans_ser_no uniquely given number
+-- table 9: the transcript list that contains the grade results(marks) of students in differet semester in different year (maximum for 4 years) and each year transcript is identified by the Trans_ser_no uniquely given number
 
 CREATE TABLE Roaster_list (
   Ac_year INT NOT NULL,
@@ -143,12 +144,12 @@ CREATE TABLE Roaster_list (
   Second_sem_final_exam_50 INT,
   CONSTRAINT PK_Roaster_Stud PRIMARY KEY (Stud_ID),
   CONSTRAINT FK_Roaster_Stud FOREIGN KEY (Stud_ID) REFERENCES Stud_data.Student(Stud_ID),
-  CONSTRAINT FK_Roaster_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID),
-  CONSTRAINT FK_Roaster_Subject FOREIGN KEY (Subject_code) REFERENCES Subject_list(Subject_code),
-  CONSTRAINT FK_Roaster_Section FOREIGN KEY (Section_code) REFERENCES Section_list(Section_code)
+  CONSTRAINT FK_Roaster_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Assignment.Grade_level(Grade_level_ID),
+  CONSTRAINT FK_Roaster_Subject FOREIGN KEY (Subject_code) REFERENCES Assignment.Subject(Subject_code),
+  CONSTRAINT FK_Roaster_Section FOREIGN KEY (Section_code) REFERENCES Assignment.Section(Section_code)
 );
 
--- table 9: Transcript list of  which is the conbind in formation containing 
+-- table 10: Transcript list of  which is the conbind in formation containing 
 CREATE TABLE Transcript (
     Trans_Ser_no INT NOT NULL IDENTITY(1001,2),
     Ac_Year INT,
@@ -162,13 +163,13 @@ CREATE TABLE Transcript (
     Final_avg float,
     Conduct CHAR(1)
     CONSTRAINT PK_Trnas PRIMARY KEY (Trans_Ser_no),
-    CONSTRAINT FK_Trans_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID),
-    CONSTRAINT FK_Trans_Section FOREIGN KEY (Section_code) REFERENCES Section_list(Section_code)
+    CONSTRAINT FK_Trans_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Assignment.Grade_level(Grade_level_ID),
+    CONSTRAINT FK_Trans_Section FOREIGN KEY (Section_code) REFERENCES Assignment.Section(Section_code)
 );
 
 drop table Transcript
 SELECT * FROM TRANSCRIPT
--- table 10: list of transform form lists 
+-- table 11: list of transform form lists 
 
 CREATE TABLE Transform_form_list (
     TSer_no VARCHAR(10) NOT NULL,
@@ -180,13 +181,13 @@ CREATE TABLE Transform_form_list (
     Target_school_name VARCHAR(100),
     CONSTRAINT PK_TForm PRIMARY KEY (TSer_no),
     CONSTRAINT FK_Tform_Stud FOREIGN KEY (Stud_ID) REFERENCES Stud_data.Student(Stud_ID),
-    CONSTRAINT FK_Tform_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID),
-    CONSTRAINT FK_Tform_Section FOREIGN KEY (Section_code) REFERENCES Section_list(Section_code)
+    CONSTRAINT FK_Tform_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Assignment.Grade_level(Grade_level_ID),
+    CONSTRAINT FK_Tform_Section FOREIGN KEY (Section_code) REFERENCES Assignment.Section(Section_code)
 );
 
 
 
--- table 11: calculated Progress reports for each grade
+-- table 12: calculated Progress reports for each grade
 
 CREATE TABLE Shumabo.Progress_report (
     Report_no INT NOT null IDENTITY(111,3),
@@ -205,11 +206,11 @@ CREATE TABLE Shumabo.Progress_report (
     Passed_female_percentage FLOAT,
     Failed_female_percentage FLOAT,
     CONSTRAINT PK_Progress PRIMARY KEY (Report_no),
-    CONSTRAINT FK_Progress_Grade FOREIGN key (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID)
+    CONSTRAINT FK_Progress_Grade FOREIGN key (Grade_level_ID) REFERENCES Assignment.Grade_level(Grade_level_ID)
 );
 
 
--- table 12: list of students with passed and failed students
+-- table 13: list of students with passed and failed students
 
 CREATE TABLE Stud_data.Pass_fail_Student (
   Roll_no int IDENTITY(1,1),
@@ -222,11 +223,11 @@ CREATE TABLE Stud_data.Pass_fail_Student (
   Stud_status VARCHAR(20),
   CONSTRAINT PK_pfs PRIMARY KEY (Roll_no),
   CONSTRAINT FK_pfs_Stud FOREIGN KEY (Stud_ID) REFERENCES Stud_data.Student,
-  CONSTRAINT FK_pfs_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID),
-  CONSTRAINT FK_pfs_Section FOREIGN KEY (Section_code) REFERENCES Section_list(Section_code)
+  CONSTRAINT FK_pfs_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Assignment.Grade_level(Grade_level_ID),
+  CONSTRAINT FK_pfs_Section FOREIGN KEY (Section_code) REFERENCES Assignment.Section(Section_code)
 );
 
--- table 13: list of withdrew students
+-- table 14: list of withdrew students
 
 CREATE TABLE Stud_data.Non_attendant (
   Ac_Year INT,
@@ -238,16 +239,16 @@ CREATE TABLE Stud_data.Non_attendant (
   Reason TEXT,
   Leave_date DATE,
   CONSTRAINT PK_NA PRIMARY KEY (Stud_ID),
-  CONSTRAINT FK_NA_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID),
-  CONSTRAINT FK_NA_Section FOREIGN KEY (Section_code) REFERENCES Section_list(Section_code)
+  CONSTRAINT FK_NA_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Assignment.Grade_level(Grade_level_ID),
+  CONSTRAINT FK_NA_Section FOREIGN KEY (Section_code) REFERENCES Assignment.Section(Section_code)
 )
 
--- table 13: list of all teachers
+-- table 15: list of all teachers
 
 
 
 drop table Teacher_data.Teacher
--- table 14: list of teachers' phone number
+-- table 16: list of teachers' phone number
 
 CREATE TABLE Teacher_data.Teacher_phone (
     Teacher_ID VARCHAR(10),
@@ -256,37 +257,37 @@ CREATE TABLE Teacher_data.Teacher_phone (
     CONSTRAINT FK_Teacher FOREIGN KEY (Teacher_ID) REFERENCES Teacher_data.Teacher(Teacher_ID)
 );
 
--- table 15: assigning Teachers on on to Grade levels
+-- table 17: assigning Teachers on on to Grade levels
 
 CREATE TABLE Teacher_grade_level (
   Teacher_ID VARCHAR(10) NOT NULL,
   Grade_level_ID VARCHAR(6),
   CONSTRAINT PK_TS PRIMARY KEY (Teacher_ID),
-  CONSTRAINT FK_TS_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID)
+  CONSTRAINT FK_TS_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Assignment.Grade_level(Grade_level_ID)
 )
 
--- 16: assining a
+-- table 18: assining a teacher to a section
 CREATE TABLE Teacher_section (
   Teacher_ID VARCHAR(10) NOT NULL,
   Section_code VARCHAR(6),
   CONSTRAINT PK_TSec PRIMARY KEY (Teacher_ID),
-  CONSTRAINT FK_TS_Section FOREIGN KEY (Section_code) REFERENCES Section_list(Section_code)
+  CONSTRAINT FK_TS_Section FOREIGN KEY (Section_code) REFERENCES Assignment.Section(Section_code)
 )
 
 
--- table 17: teacher grade_level and Section // it will be better to make this table a view table
+-- table 19: teacher grade_level and Section // it will be better to make this table a view table
 
  CREATE TABLE Teacher_Grade_Section (
   Teacher_ID VARCHAR(10),
   Grade_level_ID VARCHAR(6),
   Section_code VARCHAR(6),
   CONSTRAINT PK_TGS PRIMARY KEY (Teacher_ID),
-  CONSTRAINT FK_TGS_Grade FOREIGN key (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID),
-  CONSTRAINT FK_TGS_Section FOREIGN KEY (Section_code) REFERENCES Section_list(Section_code)
+  CONSTRAINT FK_TGS_Grade FOREIGN key (Grade_level_ID) REFERENCES Assignment.Grade_level(Grade_level_ID),
+  CONSTRAINT FK_TGS_Section FOREIGN KEY (Section_code) REFERENCES Assignment.Section(Section_code)
  );
 
 
--- table 18: assignining a teacher with specific subjects  check !!
+-- table 20: assignining a teacher with specific subjects  check !!
 
 CREATE TABLE Teacher_Section_Subject (
   Assign_ID INT IDENTITY(1000, 2) not null,
@@ -295,11 +296,11 @@ CREATE TABLE Teacher_Section_Subject (
   Subject_code VARCHAR(6),
   CONSTRAINT PK_TSS PRIMARY KEY (Assign_ID),
   CONSTRAINT FK_TSS_Teacher FOREIGN KEY (Teacher_ID) REFERENCES Teacher_data.Teacher(Teacher_ID),
-  CONSTRAINT FK_TSS_Subject FOREIGN KEY (Subject_code) REFERENCES Subject_list(Subject_code),
-  CONSTRAINT FK_TSS_Section FOREIGN KEY (Section_code) REFERENCES Section_list(Section_code)
+  CONSTRAINT FK_TSS_Subject FOREIGN KEY (Subject_code) REFERENCES Assignment.Subject(Subject_code),
+  CONSTRAINT FK_TSS_Section FOREIGN KEY (Section_code) REFERENCES Assignment.Section(Section_code)
 );
 
--- table 19: list of acadamic calendars
+-- table 21: list of acadamic calendars
 
 CREATE TABLE Shumabo.Academic_calendar (
     Calendar_ID VARCHAR(6) NOT NULL,
@@ -313,7 +314,7 @@ CREATE TABLE Shumabo.Academic_calendar (
 );
 
 
--- table 20: list of class schedules for each class 
+-- table 22: list of class schedules for each class 
 
 CREATE TABLE Class_schedule (
     Schedule_ID VARCHAR(10),
@@ -327,16 +328,16 @@ CREATE TABLE Class_schedule (
     Start_time TIME,
     End_time TIME,
     CONSTRAINT PK_Class_schedule PRIMARY KEY (Schedule_ID),
-    CONSTRAINT FK_Class_schedule_Grade_level FOREIGN KEY (Grade_level_ID) REFERENCES Grade_level_list(Grade_level_ID),
-    CONSTRAINT FK_Class_schedule_Section FOREIGN KEY (Section_code) REFERENCES Section_list(Section_code),
-    CONSTRAINT FK_Class_schedule_Subject FOREIGN KEY (Subject_code) REFERENCES Subject_list(Subject_code),
+    CONSTRAINT FK_Class_schedule_Grade_level FOREIGN KEY (Grade_level_ID) REFERENCES Assignment.Grade_level(Grade_level_ID),
+    CONSTRAINT FK_Class_schedule_Section FOREIGN KEY (Section_code) REFERENCES Assignment.Section(Section_code),
+    CONSTRAINT FK_Class_schedule_Subject FOREIGN KEY (Subject_code) REFERENCES Assignment.Subject(Subject_code),
     CONSTRAINT Fk_Class_schedule_Teacher FOREIGN KEY (Teacher_ID) REFERENCES Teacher_data.Teacher(Teacher_ID)
 );
 
 drop table Class_schedule
 SELECT * FROM Class_schedule
 
--- table 21: list of items in the resource room
+-- table 23: list of items in the resource room
 
 CREATE TABLE All_items_list (
     ISer_no VARCHAR(8) not null,
@@ -348,7 +349,7 @@ CREATE TABLE All_items_list (
     CONSTRAINT PK_ALL PRIMARY KEY (ISer_no),
     CONSTRAINT FK_NI_New FOREIGN KEY (ISer_no) REFERENCES New_items_list(ISer_no),
 );
--- table 22: list of newly add items
+-- table 24: list of newly add items
 
 CREATE TABLE New_items_list (
     ISer_no VARCHAR(8) not null,
@@ -363,7 +364,7 @@ CREATE TABLE New_items_list (
     CONSTRAINT PK_NewItem PRIMARY KEY (ISer_no)
 );
 
--- table 23: list of withdrawed itmes whith their description // can be a view table
+-- table 25: list of withdrawed itmes whith their description // can be a view table
 
 CREATE TABLE Withdrawed_Items (
     ISer_no VARCHAR(8) not null,
@@ -375,16 +376,15 @@ CREATE TABLE Withdrawed_Items (
     CONSTRAINT FK_WI_All FOREIGN KEY (ISer_no) REFERENCES All_items_list(ISer_no)
 );
 
--- table 24: list of staff members
+-- table 26: list of Staff_data.Staff members
 
-CREATE TABLE Staff (
+CREATE TABLE Staff_data.Staff (
   Staff_ID VARCHAR(10) NOT NULL,
   F_name VARCHAR(50),
   L_name VARCHAR(50),
   M_name VARCHAR(50),
   Gender VARCHAR(8),
   Birth_date DATE,
-  Age INT,
   Degree_level VARCHAR(50),
   Staff_role VARCHAR(50),
   Sub_city VARCHAR(50),
@@ -392,9 +392,9 @@ CREATE TABLE Staff (
   CONSTRAINT PK_Staff_member PRIMARY KEY (Staff_ID)
 )
 
--- table 25: list of phone numbers for staff members
+-- table 27: list of phone numbers for staff members
 
-CREATE TABLE Staff_Phone (
+CREATE TABLE Staff_data.Staff_Phone (
   Staff_ID VARCHAR(10) NOT NULL,
   Phone_number VARCHAR(20),
   CONSTRAINT PK_SP PRIMARY KEY (Staff_ID),
@@ -441,18 +441,18 @@ VALUES ('BDR001', '+251 911 123 461'),
 
 -- inserting values for Table 3
 
-INSERT INTO Grade_level_list (Grade_level_ID, Grade_level_name)
+INSERT INTO Assignment.Grade_level (Grade_level_ID, Grade_level_name)
 VALUES ('GID9', '9th'),
        ('GID10', '10th'),
        ('GID11', '11th'),
        ('GID12', '12th');
 
 -- check
--- SELECT * FROM Grade_level_list
+-- SELECT * FROM Assignment.Grade_level
 
 -- inserting values for Table 4
 
-INSERT INTO Section_list (Section_code, Grade_level_ID)
+INSERT INTO Assignment.Section (Section_code, Grade_level_ID)
 VALUES ('9A', 'gid9'), 
        ('9B', 'gid9'), 
        ('10A', 'gid10'), 
@@ -464,8 +464,8 @@ VALUES ('9A', 'gid9'),
 
 
 -- check
--- SELECT * FROM Section_list
--- SELECT distinct * FROM Section_list JOIN Grade_level_list ON Section_list.Grade_level_ID = Grade_level_list.Grade_level_ID;
+-- SELECT * FROM Assignment.Section
+-- SELECT distinct * FROM Assignment.Section JOIN Assignment.Grade_level ON Assignment.Section.Grade_level_ID = Assignment.Grade_level.Grade_level_ID;
 
 -- inserting values for Table 5
 INSERT INTO Stud_data.Student (Stud_ID, F_name, L_name, M_name, Gender, Birth_date, Age, Sub_city, Kebele, PID_no, Grade_level_ID, Section_code) 
@@ -478,7 +478,7 @@ VALUES ('ST00001', 'Habtsh','Shiferaw','Alemu', 'female', '2005-01-01', 18, 'Tan
 
 -- cheack
 -- SELECT * FROM Stud_data.Student
-       SELECT * FROM Subject_list
+       SELECT * FROM Assignment.Subject
 -- for Table 6
 
 
@@ -502,7 +502,7 @@ VALUES ('ST00001', '+251912345678'),
 
 -- for Table 7
 
-INSERT INTO Subject_list (Subject_code, Subject_name, Grade_level_ID)
+INSERT INTO Assignment.Subject (Subject_code, Subject_name, Grade_level_ID)
 VALUES ('SA9', 'Amharic', 'GID9'),
        ('SE9', 'English', 'GID9'),
        ('SM9', 'Maths', 'GID9'),
@@ -548,7 +548,7 @@ VALUES ('SA9', 'Amharic', 'GID9'),
 
 
 -- check
---select * from Subject_list
+--select * from Assignment.Subject
 INSERT INTO Roaster_list (Ac_year, Stud_ID, Grade_level_ID, Section_code, Subject_code, Frist_sem_mid_exam_25, First_sem_quiz_10, First_sem_assignment_15, First_sem_final_exam_50, Second_sem_mid_exam_25, Second_sem_quiz_10, Second_sem_assignment_15, Second_sem_final_exam_50)
 VALUES  (2021, 'ST00001', 'GID9', '9A', 'SA9', 14, 10, 15, 40, 10, 15, 10, 35),
         (2021, 'ST00001', 'GID9', '9A', 'SE9', 15, 9, 12, 50, 70, 15, 10, 35),
@@ -810,7 +810,7 @@ DELETE from Withdrawed_Items WHERE ISer_no = 'IT1112'
 
 -- for Table
 
-INSERT INTO Staff_list (Staff_ID, F_name, L_name, M_name, Gender, Birth_date, Age, Degree_level, Staff_role,Sub_city, Kebele)
+INSERT INTO Staff_data.Staff (Staff_ID, F_name, L_name, M_name, Gender, Birth_date, Age, Degree_level, Staff_role,Sub_city, Kebele)
 VALUES ('SF001', 'Abdi', 'Mohammed', 'Alemu', 'Male', '1980-01-01', 41, 'Degree', 'Facilo', 'Kebele 4'),
        ('SF002', 'Roman', 'Bealu', 'Girma', 'Female', '1985-03-15', 36, 'Master', 'Tana', 'Kebele 13'),
        ('SF003', 'Yesewku', 'Ewunetu', 'Manyazewal', 'Male', '1975-05-20', 46, 'Degree', 'Gish Abay', 'Kebele 3'),
@@ -819,11 +819,11 @@ VALUES ('SF001', 'Abdi', 'Mohammed', 'Alemu', 'Male', '1980-01-01', 41, 'Degree'
        ('SF006', 'Tangut', 'Kasa', 'Gondere', 'Female', '1973-11-22', 48, 'Degree', 'Atse Tewodros', 'Kebele 14');
 
   -- check
-  -- SELECT * FROM Staff_list
+  -- SELECT * FROM Staff_data.Staff
 
 -- for Table
 
-INSERT INTO Staff_phone (Staff_ID, Phone_number)
+INSERT INTO Staff_data.Staff_phone (Staff_ID, Phone_number)
 VALUES ('SF001', '+251 918 567 893'),
        ('SF001', '+251 918 567 894'),
        ('SF001', '+251 918 567 895'),
@@ -837,7 +837,7 @@ VALUES ('SF001', '+251 918 567 893'),
        ('SF006', '+251 918 567 811'),
        ('SF006', '+251 918 567 812');
   -- check
-  -- SELECT * FROM Staff_phone
+  -- SELECT * FROM Staff_data.Staff_phone
 
 SELECT * FROM class_schedule
 

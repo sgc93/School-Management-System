@@ -182,19 +182,19 @@ GO
 EXEC show_Student 'ST00001'  -- With there phone number
 EXEC Display_student 'ST0008'  -- without phone number
 
--- Manipulating on table Subject_list
+-- Manipulating on table Assignment.Subject
 -- Functionality 7: Add new subject
 
 GO
-  CREATE PROCEDURE Add_Subject (@Subject_code VARCHAR(6), @Subject_name VARCHAR(50), @Grade_level_ID VARCHAR(6))
+  CREATE PROCEDURE Assignment.Add_Subject (@Subject_code VARCHAR(6), @Subject_name VARCHAR(50), @Grade_level_ID VARCHAR(6))
   AS
   BEGIN
-    INSERT INTO Subject_list (Subject_code, Subject_name, Grade_level_ID)
+    INSERT INTO Assignment.Subject (Subject_code, Subject_name, Grade_level_ID)
     VALUES (@Subject_code, @Subject_name, @Grade_level_ID);
   END
 GO
 
-EXEC Add_Subject 'STD11', 'Technical Drawing', 'GID11'
+EXEC Assignment.Add_Subject 'STD11', 'Technical Drawing', 'GID11'
 
 -- functionlity 8: display data about specific subject
 
@@ -212,34 +212,34 @@ EXEC Get_Subject 'STD11'
 -- Fun tionality 9: Update specific infrmation of specific student
 
 GO
-  CREATE PROCEDURE Update_Subject (@Subject_code VARCHAR(6), @Attribute_name NVARCHAR(50), @New_value sql_variant)
+  CREATE PROCEDURE Assignment.Update_Subject (@Subject_code VARCHAR(6), @Attribute_name NVARCHAR(50), @New_value sql_variant)
   AS
   BEGIN
     SET NOCOUNT ON;
     DECLARE @SQL NVARCHAR(MAX)
 
-    SET @SQL = N'UPDATE Subject_list SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE Subject_code = ' + '''' + @Subject_code + ''''
+    SET @SQL = N'UPDATE Assignment.Subject SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE Subject_code = ' + '''' + @Subject_code + ''''
     EXECUTE sp_executesql @SQL
   END
 GO
 
-EXEC Update_Subject 'STD11', 'Subject_name', 'Drawing'
+EXEC Assignment.Update_Subject 'STD11', 'Subject_name', 'Drawing'
 
 -- Functionlity 10: Delete/remove a specific Subject from the list
 
 GO
-  CREATE PROCEDURE Delete_Subject (@Subject_code VARCHAR(6))
+  CREATE PROCEDURE Assignment.Delete_Subject (@Subject_code VARCHAR(6))
   AS
   BEGIN
-    DELETE FROM Subject_list 
+    DELETE FROM Assignment.Subject 
     WHERE Subject_code = @Subject_code;
   END
 GO
 
-EXEC Delete_Subject 'STD11'
+EXEC Assignment.Delete_Subject 'STD11'
 
-select * from Subject_list
--- Manipulating on table Section_list and Grade_level_list
+select * from Assignment.Subject
+-- Manipulating on table Assignment.Section and Grade_level_list
 
 -- Manipulationg on Roaster // with functions
 -- functionality 11: Add student result 
@@ -665,7 +665,7 @@ GO
 GO
 
 EXEC Staff_data.Add_New_Staff 'STA002','R-memihr', 'Mesafint', 'Tefera','Male', '1980-04-12', 'Master', 'Director', 'Gish Abay', 'Kebele 5'
-select * from Staff_data.Staff
+
 -- Functionality 34: Display the Data of specific Staff member
 
 GO
@@ -683,20 +683,20 @@ SELECT * FROM dbo.Get_Staff ('STA002')
 -- Functionality 35: Update the specific data of a specific Staff member
 
 GO
-  CREATE PROCEDURE Update_staff (@Staff_ID VARCHAR(10), @Attribute_name NVARCHAR(50), @New_value sql_variant)
+  CREATE PROCEDURE Staff_data.Update_staff (@Staff_ID VARCHAR(10), @Attribute_name NVARCHAR(50), @New_value sql_variant)
   AS
   BEGIN
     SET NOCOUNT ON;    
     DECLARE @SQL NVARCHAR(MAX)
 
-    SET @SQL = N'UPDATE Staff SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE Staff_ID = ' + '''' + @Staff_ID + ''''
+    SET @SQL = N'UPDATE Staff_data.Staff SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE Staff_ID = ' + '''' + @Staff_ID + ''''
     EXECUTE sp_executesql @SQL
     PRINT 'You have updated the data successfully, and the data of the Update Staff is:-'
-    SELECT * FROM Staff WHERE Staff_ID = @Staff_ID
+    SELECT * FROM Staff_data.Staff WHERE Staff_ID = @Staff_ID
   END
 GO
 
-EXEC Update_staff 'STA002', 'F_name', 'Director'
+EXEC Staff_data.Update_staff 'STA002', 'F_name', 'Director'
 
 -- Manipulating on table Item
 -- Functionality 36: Add new Items

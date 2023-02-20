@@ -9,7 +9,7 @@ USE Shumabo_secondary_school
 
 GO
   CREATE TRIGGER No_update_SerNo_TotalPrice
-  ON New_Items_list
+  ON Resource.New_item
   for UPDATE
   AS 
   IF(UPDATE(ISer_no) OR UPDATE(Total_price))
@@ -26,7 +26,7 @@ GO
 
 GO
 	CREATE TRIGGER tr_update_all_items_list
-	ON New_items_list
+	ON Resource.New_item
 	AFTER INSERT
 	AS
 	BEGIN

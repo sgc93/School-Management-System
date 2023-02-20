@@ -150,7 +150,7 @@ CREATE TABLE Roaster_list (
 );
 
 -- table 10: Transcript list of  which is the conbind in formation containing 
-CREATE TABLE Transcript (
+CREATE TABLE Stud_data.Transcript (
     Trans_Ser_no INT NOT NULL IDENTITY(1001,2),
     Ac_Year INT,
     Stud_ID VARCHAR(15) NOT NULL,
@@ -167,11 +167,9 @@ CREATE TABLE Transcript (
     CONSTRAINT FK_Trans_Section FOREIGN KEY (Section_code) REFERENCES Assignment.Section(Section_code)
 );
 
-drop table Transcript
-SELECT * FROM TRANSCRIPT
 -- table 11: list of transform form lists 
 
-CREATE TABLE Transform_form_list (
+CREATE TABLE Stud_data.Transform_form_list (
     TSer_no VARCHAR(10) NOT NULL,
     Stud_ID varchar(10) NOT NULL,
     Grade_level_ID VARCHAR(6),
@@ -267,7 +265,7 @@ CREATE TABLE Teacher_grade_level (
 )
 
 -- table 18: assining a teacher to a section
-CREATE TABLE Teacher_section (
+CREATE TABLE Assignment.Teacher_section (
   Teacher_ID VARCHAR(10) NOT NULL,
   Section_code VARCHAR(6),
   CONSTRAINT PK_TSec PRIMARY KEY (Teacher_ID),
@@ -334,12 +332,9 @@ CREATE TABLE Class_schedule (
     CONSTRAINT Fk_Class_schedule_Teacher FOREIGN KEY (Teacher_ID) REFERENCES Teacher_data.Teacher(Teacher_ID)
 );
 
-drop table Class_schedule
-SELECT * FROM Class_schedule
-
 -- table 23: list of items in the resource room
 
-CREATE TABLE All_items_list (
+CREATE TABLE Resource.All_item (
     ISer_no VARCHAR(8) not null,
     Item_name VARCHAR(50),
     Item_type varchar(50),
@@ -347,11 +342,11 @@ CREATE TABLE All_items_list (
     Total_price FLOAT, 
     Current_quantity INT,
     CONSTRAINT PK_ALL PRIMARY KEY (ISer_no),
-    CONSTRAINT FK_NI_New FOREIGN KEY (ISer_no) REFERENCES New_items_list(ISer_no),
+    CONSTRAINT FK_NI_New FOREIGN KEY (ISer_no) REFERENCES Resource.New_item(ISer_no),
 );
 -- table 24: list of newly add items
 
-CREATE TABLE New_items_list (
+CREATE TABLE Resource.New_item (
     ISer_no VARCHAR(8) not null,
     Item_name VARCHAR(50),
     Item_type varchar(50),
@@ -366,14 +361,14 @@ CREATE TABLE New_items_list (
 
 -- table 25: list of withdrawed itmes whith their description // can be a view table
 
-CREATE TABLE Withdrawed_Items (
+CREATE TABLE Resource.Withdrew_Item (
     ISer_no VARCHAR(8) not null,
     Withdrawing_date Date,
     Withdrawed_quantity INT,
     Withdrawing_reason TEXT,
     Withdrawer_name VARCHAR(100),
     CONSTRAINT PK_WI PRIMARY KEY (ISer_no),
-    CONSTRAINT FK_WI_All FOREIGN KEY (ISer_no) REFERENCES All_items_list(ISer_no)
+    CONSTRAINT FK_WI_All FOREIGN KEY (ISer_no) REFERENCES Resource.All_item(ISer_no)
 );
 
 -- table 26: list of Staff_data.Staff members
@@ -401,19 +396,17 @@ CREATE TABLE Staff_data.Staff_Phone (
   CONSTRAINT FK_SP_Staff FOREIGN KEY (Staff_ID) REFERENCES Staff(Staff_ID)
 )
 
-
 -- Inserting values for each tables created
 
 -- inserting values for Table 1
 
-INSERT INTO Stud_data.Parent (PID_no, F_name, L_name, M_name, Gender, Birth_date, Age, Relation, Sub_city, Kebele)
-VALUES ('BDR001', 'Abebe', 'Shiferaw', 'Abiy', 'Male', '1980-01-01', 41, 'Father', 'Tana', 'Kebele 1'),
-       ('BDR002', 'Almi', 'Desalegn', 'Abrham', 'Female', '1985-03-15', 36, 'Mother', 'Facilo', 'Kebele 1'),
-       ('BDR003', 'Wohy', 'Workie', 'Jemal', 'Male', '1975-05-20', 46, 'Father', 'Gish Abay', 'Kebele 2'),
-       ('BDR004', 'Meroda', 'Gedefaw', 'Smachew', 'Female', '1978-07-30', 43, 'Mother', 'Belay Zeleke', 'Kebele 2'),
-       ('BDR005', 'Sisay', 'Muhye', 'Solomon', 'Male', '1970-09-12', 51, 'Father', 'Dagmawi Menelek', 'Kebele 3'),
-       ('BDR006', 'Selam', 'Ayenew', 'Yordanos', 'Female', '1973-11-22', 48, 'Mother', 'Atse Tewodros', 'Kebele 3');
-
+INSERT INTO Stud_data.Parent (PID_no, F_name, L_name, M_name, Gender, Birth_date, Relation, Sub_city, Kebele)
+VALUES ('BDR001', 'Abebe', 'Shiferaw', 'Abiy', 'Male', '1980-01-01', 'Father', 'Tana', 'Kebele 1'),
+       ('BDR002', 'Almi', 'Desalegn', 'Abrham', 'Female', '1985-03-15', 'Mother', 'Facilo', 'Kebele 1'),
+       ('BDR003', 'Wohy', 'Workie', 'Jemal', 'Male', '1975-05-20', 'Father', 'Gish Abay', 'Kebele 2'),
+       ('BDR004', 'Meroda', 'Gedefaw', 'Smachew', 'Female', '1978-07-30', 'Mother', 'Belay Zeleke', 'Kebele 2'),
+       ('BDR005', 'Sisay', 'Muhye', 'Solomon', 'Male', '1970-09-12', 'Father', 'Dagmawi Menelek', 'Kebele 3'),
+       ('BDR006', 'Selam', 'Ayenew', 'Yordanos', 'Female', '1973-11-22', 'Mother', 'Atse Tewodros', 'Kebele 3');
 
 
 -- check
@@ -754,7 +747,7 @@ VALUES  ('T001', 'GID9'),
 
 -- for Table
 
-INSERT INTO Teacher_section (Teacher_ID, Section_code)
+INSERT INTO Assignment.Teacher_section (Teacher_ID, Section_code)
 VALUES  ('T001', '9A'),
         ('T002', '10B'),
         ('T003', '11A'),
@@ -763,7 +756,7 @@ VALUES  ('T001', '9A'),
         ('T006', '12A');
 
   -- check
-  -- SELECT * FROM Teacher_Section
+  -- SELECT * FROM Assignment.Teacher_section
 
 
 -- for Table
@@ -793,20 +786,20 @@ VALUES ('C2023', 2023, 'Cleaning Day', 'by this program almost all parts of the 
 
 -- for Table
 
-INSERT INTO New_items_list (ISer_no, Item_name, Item_type, Unit_price, Total_price, Recieving_date, Added_quantity, Item_resource, Comment)
+INSERT INTO Resource.New_item (ISer_no, Item_name, Item_type, Unit_price, Total_price, Recieving_date, Added_quantity, Item_resource, Comment)
 VALUES ('IT1112', 'Grade 12 Physices Teacher guede book', 'I_Alaki', 59.50, 5950, '2022-09-12', 100, 'From Amhara Education Bureau', 'there is no any budgent withdrwal for them.');
 
  -- check
- -- SELECT * FROM New_items_list
+ -- SELECT * FROM Resource.New_item
 
  
 -- for table
-INSERT INTO Withdrawed_Items (ISer_no, Withdrawed_quantity, Withdrawing_date, Withdrawing_reason, Withdrawer_name)
+INSERT INTO Resource.Withdrew_item (ISer_no, Withdrawed_quantity, Withdrawing_date, Withdrawing_reason, Withdrawer_name)
 VALUES ('IT1112', '45', '2022-09-14', 'teachers need a updated version', 'Tr. Mohammed Alemu')
 
-DELETE from Withdrawed_Items WHERE ISer_no = 'IT1112'
+DELETE from Resource.Withdrew_item WHERE ISer_no = 'IT1112'
  -- cheack
- -- SELECT * FROM withdrawed_items
+ -- SELECT * FROM Resource.Withdrew_item
 
 -- for Table
 

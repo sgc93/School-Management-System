@@ -66,18 +66,18 @@ SELECT * FROM Submittable_roaster
 
 GO
     CREATE VIEW Current_Item_Status AS
-    SELECT  All_items_list.ISer_no, 
-            All_items_list.Item_name, 
-            All_items_list.Item_type, 
-            All_items_list.Unit_price,
-            New_items_list.Recieving_date, 
-            New_items_list.Added_quantity,
-            (New_items_list.Added_quantity - All_items_list.Currejant_quantity) AS Withdrew_quantity,
-            All_items_list.Current_quantity,
-            All_items_list.Total_price
-    FROM All_items_list
-    LEFT JOIN New_items_list ON All_items_list.ISer_no = New_items_list.ISer_no
-    LEFT JOIN Withdrawed_Items ON All_items_list.ISer_no = Withdrawed_Items.ISer_no;
+    SELECT  Resource.All_item.ISer_no, 
+            Resource.All_item.Item_name, 
+            Resource.All_item.Item_type, 
+            Resource.All_item.Unit_price,
+            Resource.New_item.Recieving_date, 
+            Resource.New_item.Added_quantity,
+            (Resource.New_item.Added_quantity - Resource.All_item.Currejant_quantity) AS Withdrew_quantity,
+            Resource.All_item.Current_quantity,
+            Resource.All_item.Total_price
+    FROM Resource.All_item
+    LEFT JOIN Resource.New_item ON Resource.All_item.ISer_no = Resource.New_item.ISer_no
+    LEFT JOIN Withdrawed_Items ON Resource.All_item.ISer_no = Withdrawed_Items.ISer_no;
 GO
 
 -- view 5

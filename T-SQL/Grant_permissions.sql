@@ -70,9 +70,19 @@ USE Shumabo_secondary_school
         ON schema::[dbo] 
         TO [AlemGezi];
     GO
+
+    -- grant referencing schema Assignment
+    GO
+        GRANT REFERENCES 
+        ON schema::[Assignment] 
+        TO [AlemGezi];
+    GO
+
     -- grant references permission
     GO
-        GRANT REFERENCES ON SCHEMA::[dbo] TO [AlemGezi];
+        GRANT REFERENCES 
+        ON SCHEMA::[dbo] 
+        TO [AlemGezi];
     GO
  -- Grant EXECUTE permission to AlemGezi on Stud_data schema
     
@@ -154,4 +164,48 @@ USE Shumabo_secondary_school
     GO 
         GRANT CREATE TRIGGER
         TO Abiy
+    GO
+
+
+-- For user Zemenay | user for login Resource_Officer
+
+ -- Grant CREATE TABLE permission to Abiy on Assignment schema
+    -- grant creating
+    GO
+        GRANT CREATE TABLE 
+        TO Zemenay
+    GO
+    
+    -- grant selecting tables from schema dbo
+    GRANT SELECT 
+    ON schema::[dbo] 
+    TO [Zemenay];
+
+ -- Grant EXECUTE permission to Abiy on Assignment schema
+    
+    GO
+        GRANT EXECUTE 
+        ON SCHEMA::Staff_data
+        TO Zemenay
+    GO
+
+ -- Grant Create Procedre function to Abiy on Assignment schema
+
+    GO
+        Grant CREATE PROCEDURE
+        TO Zemenay
+    GO
+
+ -- Grant CREATE FUNCTION permission to Abiy on Assignment schema
+    
+    GO
+        GRANT CREATE FUNCTION
+        TO Zemenay
+    GO
+
+ -- Grant CREATE TRIGGER permission to Abiy on Assignment schema
+    
+    GO 
+        GRANT CREATE TRIGGER
+        TO Zemanay
     GO

@@ -702,25 +702,25 @@ EXEC Staff_data.Update_staff 'STA002', 'F_name', 'Director'
 -- Functionality 36: Add new Items
 
 GO
-  CREATE PROCEDURE Add_Item(@ISer_no VARCHAR(8), @Item_name VARCHAR(50), @Item_type varchar(50), @Unit_price FLOAT, @Total_price FLOAT, @Recieving_date Date, @Added_quantity INT, @Item_resource TEXT, @Comment TEXT)
+  CREATE PROCEDURE Resourse.Add_Item(@ISer_no VARCHAR(8), @Item_name VARCHAR(50), @Item_type varchar(50), @Unit_price FLOAT, @Total_price FLOAT, @Recieving_date Date, @Added_quantity INT, @Item_resource TEXT, @Comment TEXT)
   AS
   BEGIN
-    INSERT INTO New_items_list
+    INSERT INTO Resource.New_item
     VALUES (@ISer_no, @Item_name, @Item_type, @Unit_price, @Total_price, @Recieving_date, @Added_quantity, @Item_resource, @Comment)
     PRINT 'You have added new item.'
-    INSERT INTO All_items_list 
+    INSERT INTO Resource.All_item 
     VALUES (@ISer_no, @Item_name, @Item_type, @Unit_price, @Total_price, @Added_quantity)
   END
 GO
 
-EXEC Add_Item 'IT1111', 'Grade 10 Amharic text Book', 'Alaki', '40.50', '4050', '2023-03-02', '100', 'gift from BDU University', 'No Maney is invested'
-EXEC Add_Item 'IT1113', 'Board Cleaner', 'Alaki', '15', '1500', '2023-05-02', '100', 'Bought', 'Maney is from the yearly collested fee'
+EXEC Resource.Add_Item 'IT1111', 'Grade 10 Amharic text Book', 'Alaki', '40.50', '4050', '2023-03-02', '100', 'gift from BDU University', 'No Maney is invested'
+EXEC Resource.Add_Item 'IT1113', 'Board Cleaner', 'Alaki', '15', '1500', '2023-05-02', '100', 'Bought', 'Maney is from the yearly collested fee'
 
 
 -- Functionality 37:  Update the data of the available Item in the store
 
 GO
-  CREATE PROCEDURE Update_Item (@ISer_no VARCHAR(8), @Attribute_name NVARCHAR(50), @New_value sql_variant)
+  CREATE PROCEDURE Resource.Update_Item (@ISer_no VARCHAR(8), @Attribute_name NVARCHAR(50), @New_value sql_variant)
   AS
   BEGIN
     SET NOCOUNT ON;
@@ -728,24 +728,24 @@ GO
     DECLARE @SQL NVARCHAR(MAX)
     DECLARE @SQLB NVARCHAR(Max)
 
-    SET @SQL = N'UPDATE New_Items_list SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE ISer_no = ' + '''' + @ISer_no + ''''
+    SET @SQL = N'UPDATE Resource.New_item SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE ISer_no = ' + '''' + @ISer_no + ''''
     EXECUTE sp_executesql @SQL
     PRINT 'You have updated the data successfully, and the data of the Update Staff is:-'
-    SELECT * FROM New_Items_list WHERE ISer_no = @ISer_no
+    SELECT * FROM Resource.New_item WHERE ISer_no = @ISer_no
 
     IF (@Attribute_name = 'Item_name' OR @Attribute_name = 'Item_type' OR @Attribute_name = 'Unit_price' OR @Attribute_name = 'Total_price' OR @attribute_name = 'Added_quantity')
     BEGIN
-      SET @SQLB = N'UPDATE All_Items_list SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE ISer_no = ' + '''' + @ISer_no + ''''
+      SET @SQLB = N'UPDATE Resource.All_item SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE ISer_no = ' + '''' + @ISer_no + ''''
       EXECUTE sp_executesql @SQLB
     END
   END
 GO
 
-DROP PROCEDURE Update_Item
-EXEC Update_Item 'IT1111', 'Item_type', 'I_Alaki'
-EXEC Update_Item 'I20231', 'Item_type', 'I_Alaki'
-exec Update_Item 'I20231', 'Item_name', 'Grade 11 English text book.'
-EXEC Update_Item 'I20231', 'ISer_no', 'IT1112'  --updates the Serial no of the Item
+DROP PROCEDURE Resource.Update_Item
+EXEC Resource.Update_Item 'IT1111', 'Item_type', 'I_Alaki'
+EXEC Resource.Update_Item 'I20231', 'Item_type', 'I_Alaki'
+exec Resource.Update_Item 'I20231', 'Item_name', 'Grade 11 English text book.'
+EXEC Resource.Update_Item 'I20231', 'ISer_no', 'IT1112'  --updates the Serial no of the Item
 
 
 
@@ -753,25 +753,25 @@ EXEC Update_Item 'I20231', 'ISer_no', 'IT1112'  --updates the Serial no of the I
 -- Functionlity 38: withdrowing items
 
 GO
-  CREATE PROCEDURE Withdraw_Item(@ISer_no VARCHAR(8), @withdrawing_date Date, @Withdrawed_quantity INT, @Withdrawing_reason TEXT, @Withdrawer_name VARCHAR(100))
+  CREATE PROCEDURE Resource.Withdraw_Item(@ISer_no VARCHAR(8), @withdrawing_date Date, @Withdrawed_quantity INT, @Withdrawing_reason TEXT, @Withdrawer_name VARCHAR(100))
   AS
   BEGIN
-    INSERT INTO Withdrawed_Items
+    INSERT INTO Resource.Withdrew_item
     VALUES (@ISer_no, @Withdrawing_date, @Withdrawed_quantity, @Withdrawing_reason, @Withdrawer_name)
     PRINT 'You have Withdrawed an item.'
     -- update the available amount
-    UPDATE All_items_list
+    UPDATE Resource.All_item
     SET Current_quantity = Current_quantity - @Withdrawed_quantity where ISer_no = @ISer_no
     -- update the total price of the available amount
-    UPDATE All_items_list 
+    UPDATE Resource.All_item 
     SET Total_price = Unit_price * Current_quantity WHERE ISer_no = @ISer_no
   END
 GO
 
 drop PROCEDURE Withdraw_Item
 
-EXEC Withdraw_Item 'IT1113', '2023-02-02', 13, 'Class room Education', 'Tr. chernet'
-EXEC Withdraw_Item 'IT1111', '2022-02-02', 2, 'losting the priviously given one', 'St. Jemila smachew'
+EXEC Resource.Withdraw_Item 'IT1113', '2023-02-02', 13, 'Class room Education', 'Tr. chernet'
+EXEC Resource.Withdraw_Item 'IT1111', '2022-02-02', 2, 'losting the priviously given one', 'St. Jemila smachew'
 
 -- Functinality 39: display the withdrawing Items in specific year, month, week or days 
 
@@ -780,7 +780,7 @@ GO
   RETURNS TABLE
   AS
   RETURN (
-    SELECT * FROM Withdrawed_Items
+    SELECT * FROM Resource.Withdrew_item
     WHERE Withdrawing_date BETWEEN @Date_one AND  @Date_two  
   )
 GO
@@ -791,7 +791,7 @@ SELECT * FROM dbo.Get_Withdrawed_Item('2022-01-01', '2022-12-30')
 -- Functinality 40: display the Current status of an Item 
 
 GO
-  CREATE FUNCTION Get_Item (@ISer_no VARCHAR(10))
+  CREATE FUNCTION Resource.Get_Item (@ISer_no VARCHAR(10))
   RETURNS TABLE
   AS
   RETURN (
@@ -800,7 +800,7 @@ GO
   )
 GO
 
-SELECT * FROM dbo.Get_Item('IT1111')
+SELECT * FROM Resource.Get_Item('IT1111')
 
 -- Generating, displaying and updating yearly Progress reports
 -- Functionality 41: generating progress level

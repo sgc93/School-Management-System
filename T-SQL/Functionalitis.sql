@@ -472,10 +472,10 @@ EXEC Teacher_data.Update_Teacher 'T007', 'M_name', 'Takele'
 -- Assigning teachers to specific Grade level , displaying the assignment and updating the assignment
 -- Functionlity 22: Assignign a particular teacher to specific Grade_level
 GO
-  CREATE PROCEDURE Assign_Teacher_to_Grade (@Teacher_ID VARCHAR(10), @Grade_Level_ID VARCHAR(6))
+  CREATE PROCEDURE Assignment.Assign_Teacher_to_Grade (@Teacher_ID VARCHAR(10), @Grade_Level_ID VARCHAR(6))
   AS
   BEGIN
-    INSERT INTO Teacher_Grade_level(Teacher_ID, Grade_level_ID)
+    INSERT INTO Assignment.Teacher_Grade_Level(Teacher_ID, Grade_level_ID)
     VALUES (@Teacher_ID, @Grade_Level_ID)
   END
 GO
@@ -489,7 +489,7 @@ GO
   RETURNS TABLE
   AS
   RETURN (
-    SELECT * FROM Teacher_grade_level
+    SELECT * FROM Assignment.Teacher_Grade_Level
     WHERE Teacher_ID = @Teacher_ID
   )
 GO
@@ -499,10 +499,10 @@ select * from dbo.Display_Assigne_Teacher ('T007')
 -- Functionality 24: Updating assignment of teachers to the grade level
 
 GO
-  CREATE PROCEDURE Update_Grade_Assignment(@Teacher_ID VARCHAR(10), @New_Grade_level_ID VARCHAR(10))
+  CREATE PROCEDURE Assignment.Update_Grade_Assignment(@Teacher_ID VARCHAR(10), @New_Grade_level_ID VARCHAR(10))
   AS
   BEGIN
-    UPDATE Teacher_grade_level
+    UPDATE Assignment.Teacher_Grade_Level
     SET Grade_level_ID = @New_Grade_level_ID
     WHERE Teacher_ID = @Teacher_ID
 
@@ -517,10 +517,10 @@ EXEC Update_Grade_Assignment 'T007', 'GID10'
 -- functionality 25: Assigning a teacher to a Section and subject
 
 GO
-  CREATE PROCEDURE Assign_Teacher_to_Sec_Sub (@Teacher_ID VARCHAR(10), @Section_code VARCHAR(6), @Subject_code VARCHAR(6))
+  CREATE PROCEDURE Assignment.Assign_Teacher_to_Sec_Sub (@Teacher_ID VARCHAR(10), @Section_code VARCHAR(6), @Subject_code VARCHAR(6))
   AS
   BEGIN
-    INSERT INTO Teacher_Section_Subject (Teacher_ID, Section_code, Subject_code)
+    INSERT INTO  Assignment.Teacher_Section_Subject(Teacher_ID, Section_code, Subject_code)
     VALUES (@Teacher_ID, @Section_code, @Subject_code)
   END
 GO
@@ -534,7 +534,7 @@ GO
   RETURNS TABLE
   AS
   RETURN (
-    SELECT * FROM Teacher_Section_Subject
+    SELECT * FROM 
     WHERE Teacher_ID = @Teacher_ID
   )
 GO
@@ -544,20 +544,20 @@ select * from dbo.Display_Assigned_Teacher_to_Sec_Sub ('T007')
 -- Functionality 27: Updating assignment of teachers to the grade level
 
 GO
-  CREATE PROCEDURE Update_Sec_Sub_Assignment (@Teacher_ID VARCHAR(10), @Attribute_name NVARCHAR(50), @New_value sql_variant)
+  CREATE PROCEDURE Assignment.Update_Sec_Sub_Assignment (@Teacher_ID VARCHAR(10), @Attribute_name NVARCHAR(50), @New_value sql_variant)
   AS
   BEGIN
     SET NOCOUNT ON;
     DECLARE @SQL NVARCHAR(MAX)
 
-    SET @SQL = N'UPDATE Teacher_Section_Subject SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE Teacher_ID = ' + '''' + @Teacher_ID + ''''
+    SET @SQL = N'UPDATE Assignment.Teacher_Section_subject SET ' + @Attribute_name + ' = ' + '''' + CAST(@New_value AS NVARCHAR(MAX)) + '''' + ' WHERE Teacher_ID = ' + '''' + @Teacher_ID + ''''
     EXECUTE sp_executesql @SQL
     PRINT 'You Update an Information Successfully!'
   END
 GO
 
 
-EXEC Update_Sec_Sub_Assignment 'T007', 'Subject_code', 'SE10'
+EXEC Assignment.Update_Sec_Sub_Assignment 'T007', 'Subject_code', 'SE10'
 
 
 -- creating, displaying, updating and Deleting an Academic Calendar
@@ -949,24 +949,24 @@ EXEC Stud_data.Update_Non_attendant 2023, 'ST0009', 'Transfer to other school', 
 -- Generating, displaying and updating class schedule
 -- functionality 46: store class schedule
 GO
-  CREATE PROCEDURE Add_Class_schedule (@Schedule_Id VARCHAR(10), @Ac_year INT, @Section_code VARCHAR(6), @Grade_level_ID VARCHAR(6), @Subject_code VARCHAR(6), @Teacher_ID VARCHAR(10), @Day_name VARCHAR(10), @period_no INT, @Start_time TIME, @End_time TIME)
+  CREATE PROCEDURE Assignment.Add_Class_schedule (@Schedule_Id VARCHAR(10), @Ac_year INT, @Section_code VARCHAR(6), @Grade_level_ID VARCHAR(6), @Subject_code VARCHAR(6), @Teacher_ID VARCHAR(10), @Day_name VARCHAR(10), @period_no INT, @Start_time TIME, @End_time TIME)
   AS
   BEGIN
-    INSERT INTO Class_schedule (Schedule_Id, Ac_year, Section_code, Grade_level_ID, Subject_code, Teacher_Id, Day_name, period_no, Start_time, End_time)
+    INSERT INTO Assignment.Class_Schedule (Schedule_Id, Ac_year, Section_code, Grade_level_ID, Subject_code, Teacher_Id, Day_name, period_no, Start_time, End_time)
     VALUES (@Schedule_Id, @Ac_year, @Section_code, @Grade_level_ID, @Subject_code, @Teacher_ID, @Day_name, @period_no, @Start_time, @End_time);
     
     PRINT 'You have added a class schedule'
   END
 GO
 
-drop PROCEDURE add_class_schedule
+drop PROCEDURE Assignment.Add_Class_schedule;
 
-EXEC Add_Class_schedule '2312AMon1', 2023, '12A', 'GID12', 'SA12', 'T001', 'Monday', 1, '02:00:00', '02:40:00'
-EXEC Add_Class_schedule '2312AMon2', 2023, '12A', 'GID12', 'SE12', 'T004', 'Monday', 2, '02:40:00', '03:20:00'
-EXEC Add_Class_schedule '2312AMon3', 2023, '12A', 'GID12', 'SCH12', 'T003', 'Monday', 3, '03:20:00', '04:00:00'
-EXEC Add_Class_schedule '2312AMon4', 2023, '12A', 'GID12', 'SCI12', 'T002', 'Monday', 4, '04:15:00', '04:55:00'
-EXEC Add_Class_schedule '2312AMon5', 2023, '12A', 'GID12', 'SP12', 'T005', 'Monday', 5, '04:55:00', '05:35:00'
-EXEC Add_Class_schedule '2312AMon6', 2023, '12A', 'GID12', 'SM12', 'T006', 'Monday', 6, '02:35:00', '06:15:00'
+EXEC Assignment.Add_Class_schedule '2312AMon1', 2023, '12A', 'GID12', 'SA12', 'T001', 'Monday', 1, '02:00:00', '02:40:00'
+EXEC Assignment.Add_Class_schedule '2312AMon2', 2023, '12A', 'GID12', 'SE12', 'T004', 'Monday', 2, '02:40:00', '03:20:00'
+EXEC Assignment.Add_Class_schedule '2312AMon3', 2023, '12A', 'GID12', 'SCH12', 'T003', 'Monday', 3, '03:20:00', '04:00:00'
+EXEC Assignment.Add_Class_schedule '2312AMon4', 2023, '12A', 'GID12', 'SCI12', 'T002', 'Monday', 4, '04:15:00', '04:55:00'
+EXEC Assignment.Add_Class_schedule '2312AMon5', 2023, '12A', 'GID12', 'SP12', 'T005', 'Monday', 5, '04:55:00', '05:35:00'
+EXEC Assignment.Add_Class_schedule '2312AMon6', 2023, '12A', 'GID12', 'SM12', 'T006', 'Monday', 6, '02:35:00', '06:15:00'
 
 -- Functionality 47: Displaying class schedule
 
@@ -976,7 +976,7 @@ GO
   AS 
   RETURN (
     SELECT Period_no, Start_time, End_time, Subject_name, Teacher_F_name
-    From Class_schedule_detail
+    From Assignment.Class_schedule_detail
     WHERE  Ac_year = @Ac_Year AND Section_code = @Section_code AND Day_name = @Day_name
   )
 GO
@@ -986,13 +986,13 @@ SELECT * FROM dbo.Get_class_schedule(2023, '12A', 'Monday')
 
 -- OR
 
-SELECT * FROM Class_schedule_detail
+SELECT * FROM Assignment.Class_schedule_detail
 WHERE Ac_year = 2023 AND Grade_level_ID = '12A'
 
 -- Functionality 48: Updating class schedule
 
 GO
-  CREATE PROCEDURE Update_class_schedule (@Schedule_ID VARCHAR(10), @Attribute_name NVARCHAR(50), @New_value sql_variant)
+  CREATE PROCEDURE Assignment.Update_class_schedule (@Schedule_ID VARCHAR(10), @Attribute_name NVARCHAR(50), @New_value sql_variant)
   AS
   BEGIN
     SET NOCOUNT ON;    
@@ -1005,7 +1005,7 @@ GO
   END
 GO
 
-EXEC Update_class_schedule '2312AMon1', 'Subject_code', 'SB12'
+EXEC Assignment.Update_class_schedule '2312AMon1', 'Subject_code', 'SB12'
 
 -- functionlaity 49: Generate Report card (view 7)
 -- functionlaity 50: display the report card of a specified student

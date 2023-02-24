@@ -243,9 +243,22 @@ CREATE TABLE Stud_data.Non_attendant (
 
 -- table 15: list of all teachers
 
+CREATE TABLE Teacher_data.Teacher (
+  Teacher_ID VARCHAR(10) NOT NULL,
+  F_name VARCHAR(50),
+  L_name VARCHAR(50),
+  M_name VARCHAR(50),
+  Gender VARCHAR(8),
+  Birth_date DATE,
+  Degree_level VARCHAR(50),
+  Staff_role VARCHAR(50),
+  Sub_city VARCHAR(50),
+  Kebele VARCHAR(50),
+  CONSTRAINT PK_Teacher PRIMARY key (Teacher_ID)
+);
 
 
-drop table Teacher_data.Teacher
+select * from  Teacher_data.Teacher
 -- table 16: list of teachers' phone number
 
 CREATE TABLE Teacher_data.Teacher_phone (
@@ -257,12 +270,13 @@ CREATE TABLE Teacher_data.Teacher_phone (
 
 -- table 17: assigning Teachers on on to Grade levels
 
-CREATE TABLE Teacher_grade_level (
+CREATE TABLE Assignment.Teacher_Grade_Level (
   Teacher_ID VARCHAR(10) NOT NULL,
   Grade_level_ID VARCHAR(6),
   CONSTRAINT PK_TS PRIMARY KEY (Teacher_ID),
   CONSTRAINT FK_TS_Grade FOREIGN KEY (Grade_level_ID) REFERENCES Assignment.Grade_level(Grade_level_ID)
 )
+
 
 -- table 18: assining a teacher to a section
 CREATE TABLE Assignment.Teacher_section (
@@ -287,7 +301,7 @@ CREATE TABLE Assignment.Teacher_section (
 
 -- table 20: assignining a teacher with specific subjects  check !!
 
-CREATE TABLE Teacher_Section_Subject (
+CREATE TABLE Assignment.Teacher_Section_Subject (
   Assign_ID INT IDENTITY(1000, 2) not null,
   Teacher_ID VARCHAR(10),
   Section_code VARCHAR(6),
@@ -314,7 +328,7 @@ CREATE TABLE Shumabo.Academic_calendar (
 
 -- table 22: list of class schedules for each class 
 
-CREATE TABLE Class_schedule (
+CREATE TABLE Assignment.Class_Schedule (
     Schedule_ID VARCHAR(10),
     Ac_year INT,
     Section_code VARCHAR(6) NOT NULL,
@@ -331,7 +345,7 @@ CREATE TABLE Class_schedule (
     CONSTRAINT FK_Class_schedule_Subject FOREIGN KEY (Subject_code) REFERENCES Assignment.Subject(Subject_code),
     CONSTRAINT Fk_Class_schedule_Teacher FOREIGN KEY (Teacher_ID) REFERENCES Teacher_data.Teacher(Teacher_ID)
 );
-
+select * from Assignment.class_schedule
 -- table 23: list of items in the resource room
 
 CREATE TABLE Resource.All_item (
@@ -734,7 +748,7 @@ VALUES ('T001', '+251 989 143 563'),
 
 -- for Table
 
-INSERT INTO Teacher_grade_level (Teacher_ID, Grade_level_ID)
+INSERT INTO Assignment.Teacher_Grade_Level (Teacher_ID, Grade_level_ID)
 VALUES  ('T001', 'GID9'),
         ('T002', 'GID10'),
         ('T003', 'GID11'),
@@ -743,7 +757,7 @@ VALUES  ('T001', 'GID9'),
         ('T006', 'GID12');
 
   -- check
-  -- SELECT * FROM Teacher_grade_level
+  -- SELECT * FROM Assignment.Teacher_Grade_Level
 
 -- for Table
 
@@ -832,5 +846,5 @@ VALUES ('SF001', '+251 918 567 893'),
   -- check
   -- SELECT * FROM Staff_data.Staff_phone
 
-SELECT * FROM class_schedule
+SELECT * FROM Assignment.Class_Schedule
 

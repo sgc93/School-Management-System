@@ -138,9 +138,12 @@ USE Shumabo_secondary_school
     GRANT SELECT 
     ON schema::[dbo] 
     TO [Abiy];
+ -- grant a create view permission
 
- -- Grant EXECUTE permission to Abiy on Assignment schema
+    GRANT CREATE VIEW TO Abiy;
     
+ -- Grant EXECUTE permission to Abiy on Assignment schema
+  
     GO
         GRANT EXECUTE 
         ON SCHEMA::Assignment 
@@ -165,7 +168,11 @@ USE Shumabo_secondary_school
         GRANT CREATE TRIGGER
         TO Abiy
     GO
+ -- Grant reference permission on schema Teacher_Data
 
+    GRANT REFERENCES 
+    ON SCHEMA::Teacher_Data
+    TO Abiy
 
 -- For user Zemenay | user for login Resource_Officer
 

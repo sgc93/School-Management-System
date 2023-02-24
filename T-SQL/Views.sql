@@ -7,24 +7,24 @@ Use Shumabo_secondary_school
 
 GO
     CREATE VIEW Teacher_data AS
-    SELECT  Teacher_list.Teacher_ID,
-            Teacher_list.F_name,
-            Teacher_list.L_name,
-            Teacher_list.M_name,
-            Teacher_list.Gender,
-            Teacher_list.Birth_date,
-            Teacher_list.Degree_level,
-            Teacher_list.Sub_city,
-            Teacher_list.Kebele,
+    SELECT  Teacher_data.Teacher.Teacher_ID,
+            Teacher_data.Teacher.F_name,
+            Teacher_data.Teacher.L_name,
+            Teacher_data.Teacher.M_name,
+            Teacher_data.Teacher.Gender,
+            Teacher_data.Teacher.Birth_date,
+            Teacher_data.Teacher.Degree_level,
+            Teacher_data.Teacher.Sub_city,
+            Teacher_data.Teacher.Kebele,
             Teacher_phone.Phone_number,
-            Teacher_grade_level.Grade_level_ID,
+            Assignment.Teacher_Grade_Level.Grade_level_ID,
             Assignment.Teacher_section_subject.Section_code,
             Assignment.Teacher_section_subject.Subject_code
-    FROM Teacher_list
+    FROM Teacher_data.Teacher
 
-    LEFT JOIN Teacher_grade_level ON Teacher_list.Teacher_ID = Teacher_grade_level.Teacher_ID
-    LEFT JOIN Assignment.Teacher_section_subject ON Teacher_list.Teacher_ID = Assignment.Teacher_section_subject.Teacher_ID
-    LEFT JOIN Teacher_phone ON Teacher_list.Teacher_ID = Teacher_phone.Teacher_ID
+    LEFT JOIN Assignment.Teacher_Grade_Level ON Teacher_data.Teacher.Teacher_ID = Assignment.Teacher_Grade_Level.Teacher_ID
+    LEFT JOIN Assignment.Teacher_section_subject ON Teacher_data.Teacher.Teacher_ID = Assignment.Teacher_section_subject.Teacher_ID
+    LEFT JOIN Teacher_phone ON Teacher_data.Teacher.Teacher_ID = Teacher_phone.Teacher_ID
 
 GO
 
@@ -33,15 +33,15 @@ GO
 
 GO
     CREATE VIEW Subject_Teacher AS
-    SELECT  Subject_list.Subject_code AS Subject_code,
-            Subject_list.Subject_name AS Subject_name,
+    SELECT  Assignment.Subject.Subject_code AS Subject_code,
+            Assignment.Subject.Subject_name AS Subject_name,
             Assignment.Teacher_section_subject.Section_code AS Section_code,
-            Subject_list.Grade_level_ID As Grade_level_Id,
+            Assignment.Subject.Grade_level_ID As Grade_level_Id,
             Assignment.Teacher_section_subject.Teacher_ID AS Teacher_ID,
-            Teacher_list.F_name AS Teacher_name
-    FROM Subject_list
-    LEFT JOIN Assignment.Teacher_section_subject ON Subject_list.Subject_code = Assignment.Teacher_section_subject.Subject_code
-    LEFT JOIN Teacher_list ON Assignment.Teacher_section_subject.Teacher_ID = Teacher_list.Teacher_ID
+            Teacher_data.Teacher.F_name AS Teacher_name
+    FROM Assignment.Subject
+    LEFT JOIN Assignment.Teacher_section_subject ON Assignment.Subject.Subject_code = Assignment.Teacher_section_subject.Subject_code
+    LEFT JOIN Teacher_data.Teacher ON Assignment.Teacher_section_subject.Teacher_ID = Teacher_data.Teacher.Teacher_ID
 GO
 
 -- view 3
@@ -101,27 +101,27 @@ GO
 -- store the detail information of class schedule for each section
 
 GO
-    CREATE VIEW Class_schedule_detail AS
+    CREATE VIEW Assignment.Class_schedule_detail AS
     SELECT 
-            Class_schedule.Schedule_ID,
-            Class_schedule.Ac_year,
-            Class_schedule.Section_code,
-            Class_schedule.Grade_level_ID,
+            Assignment.Class_Schedule.Schedule_ID,
+            Assignment.Class_Schedule.Ac_year,
+            Assignment.Class_Schedule.Section_code,
+            Assignment.Class_Schedule.Grade_level_ID,
             Assignment.Grade_level.Grade_level_name,
-            Class_schedule.period_no,
-            Class_schedule.Subject_code,
-            Subject_list.Subject_name,
-            Class_schedule.Teacher_ID,
-            Teacher_list.F_name as Teacher_F_name,
-            Class_schedule.Day_name,
-            Class_schedule.Start_time,
-            Class_schedule.End_time
-    FROM Class_schedule
-    LEFT JOIN Assignment.Grade_level ON Class_schedule.Grade_level_ID = Assignment.Grade_level.Grade_level_ID
-    LEFT JOIN Subject_list ON Class_schedule.Subject_code = Subject_list.Subject_code
-    LEFT JOIN Teacher_list ON Class_schedule.Teacher_ID = Teacher_list.Teacher_ID
+            Assignment.Class_Schedule.period_no,
+            Assignment.Class_Schedule.Subject_code,
+            Assignment.Subject.Subject_name,
+            Assignment.Class_Schedule.Teacher_ID,
+            Teacher_data.Teacher.F_name as Teacher_F_name,
+            Assignment.Class_Schedule.Day_name,
+            Assignment.Class_Schedule.Start_time,
+            Assignment.Class_Schedule.End_time
+    FROM Assignment.Class_Schedule
+    LEFT JOIN Assignment.Grade_level ON Assignment.Class_Schedule.Grade_level_ID = Assignment.Grade_level.Grade_level_ID
+    LEFT JOIN Assignment.Subject ON Assignment.Class_Schedule.Subject_code = Assignment.Subject.Subject_code
+    LEFT JOIN Teacher_data.Teacher ON Assignment.Class_Schedule.Teacher_ID = Teacher_data.Teacher.Teacher_ID
 GO
-
+drop view Assignment.Class_schedule_detail
 -- view 7
 -- formalized Report card from each student
 

@@ -2,7 +2,6 @@ USE Shumabo_secondary_school
 
 -- Functionalities
 
--- Manipulating on Parent Table
 -- Functionality 1: Add new Parent { with Stored procedure}
 GO
   CREATE PROCEDURE Stud_data.Add_parent (
@@ -94,8 +93,6 @@ EXEC Stud_data.Update_parent 'BDR007', 'Sub_city', 'Shumabo'
 EXEC Stud_data.Update_parent 'BDR001', 'Birth_date', '1981-01-01'
 EXEC Stud_data.Update_parent 'BDR001', 'PID_no', 'BDR000'  -- cannot update the PID_no of any parent since its concerns with referential integrity.
 
-
--- Manupulating on table Stud_data.Student
 -- Functionality 4: Register new student
 
 GO
@@ -182,7 +179,6 @@ GO
 EXEC show_Student 'ST00001'  -- With there phone number
 EXEC Display_student 'ST0008'  -- without phone number
 
--- Manipulating on table Assignment.Subject
 -- Functionality 7: Add new subject
 
 GO
@@ -239,12 +235,10 @@ GO
 EXEC Assignment.Delete_Subject 'STD11'
 
 select * from Assignment.Subject
--- Manipulating on table Assignment.Section and Grade_level_list
 
--- Manipulationg on Roaster // with functions
 -- functionality 11: Add student result 
 GO
-  CREATE PROCEDURE Add_Roaster(
+  CREATE PROCEDURE Stud_data.Add_Roaster(
     @Ac_year FLOAT,
     @Stud_ID VARCHAR(10),
     @Grade_level_ID VARCHAR(6),
@@ -260,13 +254,12 @@ GO
     @Second_sem_final_exam_50 FLOAT )
   AS
   BEGIN
-    INSERT INTO Roaster_list(Ac_year, Stud_ID, Grade_level_ID, Section_code, Subject_code, Frist_sem_mid_exam_25, First_sem_quiz_10, First_sem_assignment_15, First_sem_final_exam_50, Second_sem_mid_exam_25, Second_sem_quiz_10, Second_sem_assignment_15, Second_sem_final_exam_50 )
+    INSERT INTO Stud_data.Roaster(Ac_year, Stud_ID, Grade_level_ID, Section_code, Subject_code, Frist_sem_mid_exam_25, First_sem_quiz_10, First_sem_assignment_15, First_sem_final_exam_50, Second_sem_mid_exam_25, Second_sem_quiz_10, Second_sem_assignment_15, Second_sem_final_exam_50 )
     VALUES (@Ac_year, @Stud_ID, @Grade_level_ID, @Section_code, @Subject_code, @Frist_sem_mid_exam_25, @First_sem_quiz_10, @First_sem_assignment_15, @First_sem_final_exam_50, @Second_sem_mid_exam_25, @Second_sem_quiz_10, @Second_sem_assignment_15, @Second_sem_final_exam_50)
   END
 GO
 
-EXEC Add_Roaster '2023','ST00004', 'GID10', '10A', 'SA10', 24, 10, 15, 44, 23, 9, 13, 50
-SELECT * from Roaster_list 
+EXEC Stud_data.Add_Roaster '2023','ST00004', 'GID10', '10A', 'SA10', 24, 10, 15, 44, 23, 9, 13, 50
 
 -- functionality 12: display specific student's result
 
@@ -284,12 +277,12 @@ EXEC Display_Roaster 'ST00006', 2022
 -- Functionlity 13: update specific information of specific student
 
 GO
-    CREATE PROCEDURE Update_Roaster (@Ac_year INT, @Stud_ID VARCHAR(10), @Subject_code VARCHAR(6), @attribute_name NVARCHAR(MAX), @New_value SQL_VARIANT)
+    CREATE PROCEDURE Stud_data.Update_Roaster (@Ac_year INT, @Stud_ID VARCHAR(10), @Subject_code VARCHAR(6), @attribute_name NVARCHAR(MAX), @New_value SQL_VARIANT)
     AS
     BEGIN
         DECLARE @SQL NVARCHAR(MAX)
         
-        SET @SQL = N'UPDATE Roaster_list 
+        SET @SQL = N'UPDATE Stud_data.Roaster 
             SET ' + @attribute_name + ' = ' + CAST(@New_value AS NVARCHAR(MAX)) + '
             WHERE Ac_year = ' + CAST(@Ac_year AS NVARCHAR(10)) + '
             AND Stud_ID = ''' + @Stud_ID + '''
@@ -299,14 +292,12 @@ GO
     END
 GO
 
-EXEC Update_Roaster 2022,'ST00006' , 'SCH11', 'Frist_sem_mid_exam_25', 24
+EXEC Stud_data.Update_Roaster 2022,'ST00006' , 'SCH11', 'Frist_sem_mid_exam_25', 24
 
-
--- Generating, Updating and dispalying Transcript
 -- Functionality 14: generating a Transcript for all students
 
 GO
-  CREATE PROCEDURE Generate_Transcript (@Stud_ID VARCHAR(15), @Ac_Year INT, @Conduct CHAR(1))
+  CREATE PROCEDURE Stud_data.Generate_Transcript (@Stud_ID VARCHAR(15), @Ac_Year INT, @Conduct CHAR(1))
   AS
   BEGIN
     DECLARE @Grade_level_ID VARCHAR(6),
@@ -318,67 +309,63 @@ GO
             @Final_avg FLOAT,
             @Number_of_Subjects INT
 
-    SET @Grade_level_ID = (SELECT TOP 1 @Grade_level_ID FROM Submittable_roaster WHERE Stud_ID = @Stud_ID AND Ac_year = @Ac_Year)
-    SET @Section_code = (SELECT TOP 1 @Section_code FROM Submittable_roaster WHERE Stud_ID = @Stud_ID AND Ac_year = @Ac_Year)
-    SET @First_semester_total = (SELECT SUM(First_sem_sum) From Submittable_roaster WHERE Stud_ID = @Stud_ID AND Ac_year = @Ac_Year)
-    SET @Second_semester_total = (SELECT SUM(Second_sem_sum) From Submittable_roaster WHERE Stud_ID = @Stud_ID AND Ac_year = @Ac_Year)
-    SET @Number_of_Subjects = (select COUNT(Subject_code) From Submittable_roaster WHERE Stud_ID = @Stud_ID AND Ac_year = @Ac_Year)
+    SET @Grade_level_ID = (SELECT TOP 1 @Grade_level_ID FROM Stud_data.Submittable_roaster WHERE Stud_ID = @Stud_ID AND Ac_year = @Ac_Year)
+    SET @Section_code = (SELECT TOP 1 @Section_code FROM Stud_data.Submittable_roaster WHERE Stud_ID = @Stud_ID AND Ac_year = @Ac_Year)
+    SET @First_semester_total = (SELECT SUM(First_sem_sum) From Stud_data.Submittable_roaster WHERE Stud_ID = @Stud_ID AND Ac_year = @Ac_Year)
+    SET @Second_semester_total = (SELECT SUM(Second_sem_sum) From Stud_data.Submittable_roaster WHERE Stud_ID = @Stud_ID AND Ac_year = @Ac_Year)
+    SET @Number_of_Subjects = (select COUNT(Subject_code) From Stud_data.Submittable_roaster WHERE Stud_ID = @Stud_ID AND Ac_year = @Ac_Year)
     SET @First_semester_avg = ((@First_semester_total/ @Number_of_Subjects))
     SET @Second_semester_avg = ((@Second_semester_total/ @Number_of_Subjects))
-    SET @Final_avg = (@First_semester_avg + @Second_semester_avg) / 2
-    -- SET @Rank = (SELECT Rank from Student_Rank where Stud_ID = @Stud_ID AND Ac_year = @Ac_Year AND @Section_code = @Section_code)          
-    INSERT INTO Transcript (Ac_Year, Stud_ID, Grade_level_ID, Section_Code,First_semester_total, Second_semester_total, First_semester_avg, Second_semester_avg, Final_avg, Conduct) 
+    SET @Final_avg = (@First_semester_avg + @Second_semester_avg) / 2;
+    INSERT INTO Stud_data.Transcript (Ac_Year, Stud_ID, Grade_level_ID, Section_Code,First_semester_total, Second_semester_total, First_semester_avg, Second_semester_avg, Final_avg, Conduct) 
     VALUES (@Ac_Year, @Stud_ID, @Grade_level_ID, @Section_code, @First_semester_total, @Second_semester_total, @First_semester_avg, @Second_semester_total, @Final_avg, @Conduct)
   END
 GO
 
-drop procedure Generate_Transcript
+drop procedure Stud_data.Generate_Transcript
 
-EXEC Generate_Transcript 'ST00001', '2022', 'A'
-EXEC Generate_Transcript 'ST00004', '2023', 'A'
-
-
+EXEC Stud_data.Generate_Transcript 'ST00001', '2022', 'A'
+EXEC Stud_data.Generate_Transcript 'ST00004', '2023', 'A'
 
 -- Functionality 15: updating the Transcript of a specific student when there is a change  of his/her in the roaster_list
 
 GO
-  CREATE PROCEDURE Update_Transcript (@Stud_ID VARCHAR(15), @Ac_year INT, @attribute_name NVARCHAR(50), @New_value SQL_VARIANT)
+  CREATE PROCEDURE Stud_data.Update_Transcript (@Stud_ID VARCHAR(15), @Ac_year INT, @attribute_name NVARCHAR(50), @New_value SQL_VARIANT)
   AS
   BEGIN
       SET NOCOUNT ON;
       DECLARE @SQL NVARCHAR(MAX)
 
-      SET @SQL =  N'UPDATE Transcript 
+      SET @SQL =  N'UPDATE Stud_data.Transcript 
                   SET ' + @attribute_name + ' = ' + CAST(@New_value AS NVARCHAR(MAX)) + '
                   WHERE Ac_year = ' + CAST(@Ac_year AS NVARCHAR(10)) + '
                   AND Stud_ID = ''' + @Stud_ID + ''''
       EXECUTE sp_executesql @SQL
 
-      SELECT * FROM Transcript WHERE Stud_ID  = @Stud_ID AND Ac_Year = @Ac_Year
+      SELECT * FROM Stud_data.Transcript WHERE Stud_ID  = @Stud_ID AND Ac_Year = @Ac_Year
   END
 GO
 
-EXEC Update_Transcript 'ST00001', '2023', 'Rank', 4
+EXEC Stud_data.Update_Transcript '','',''
 
 -- Functionality 16: display the Transcript of a specific Student
 
 GO
-    CREATE FUNCTION Display_Transcript(@Stud_ID VARCHAR(10), @Ac_year INT)
+    CREATE FUNCTION Stud_data.Display_Transcript(@Stud_ID VARCHAR(10), @Ac_year INT)
     RETURNS TABLE
     AS
     RETURN (
-      SELECT * FROM Transcript
+      SELECT * FROM Stud_data.Transcript
         WHERE Stud_ID = @Stud_ID AND Ac_year = @Ac_year
     )
 GO
 
 SELECT * FROM dbo.Display_Transcript('ST00001', '2022')
 
--- Manipulating the transform form
 -- Functionality 17: create the transform form for specific student
 
 GO
-  CREATE PROCEDURE ADD_Transform_form( 
+  CREATE PROCEDURE Stud_data.ADD_Transform_form( 
     @TSer_no VARCHAR(10),
     @Stud_ID varchar(10), 
     @Grade_level_ID VARCHAR(6), 
@@ -389,30 +376,25 @@ GO
 
   AS
   BEGIN
-    INSERT INTO Transform_form_list(TSer_no, Stud_ID, Grade_level_ID, Section_code , Reason, Application_date, Target_school_name)
+    INSERT INTO Stud_data.Transform_form(TSer_no, Stud_ID, Grade_level_ID, Section_code , Reason, Application_date, Target_school_name)
     VALUES (@TSer_no, @Stud_ID, @Grade_level_ID , @Section_code, @Reason, @Application_date, @Target_school_name)
   END
 GO
 
-EXEC ADD_Transform_form 'TF1234', 'ST00001', 'GID11', '11A', 'Changing address', '2023-03-04', 'Belay Zeleke Secondary school'
-
-select * from Transform_form_list
+EXEC Stud_data.ADD_Transform_form 'TF1234', 'ST00001', 'GID11', '11A', 'Changing address', '2023-03-04', 'Belay Zeleke Secondary school'
 
 -- functionlity 18: display/provide the transform form of specific studnet
 
 GO
-  CREATE PROCEDURE Dispaly_Transform_form ( @Stud_ID VARCHAR(10))
+  CREATE PROCEDURE Stud_data.Dispaly_Transform_form ( @Stud_ID VARCHAR(10))
   AS
   BEGIN
-    SELECT * FROM Transform_form_list
+    SELECT * FROM Stud_data.Transform_form
     WHERE Stud_ID = @Stud_ID
   END
 GO
 
-EXEC Dispaly_Transform_form 'ST00001'
-
-
--- Manipulating the Teacher_data.Teacher table
+EXEC Stud_data.Dispaly_Transform_form 'ST00001'
 
 -- Functionality 19: Add Teacher { with Stored procedure}
 GO
@@ -435,7 +417,6 @@ GO
   END
 GO
 
-drop PROCEDURE Teaacher_data.Add_Teacher
 EXEC Teacher_data.Add_Teacher 'T007', 'Bewketu', 'Sewmehon', 'gash Takele', 'Male', '1980-01-01', 'Master', 'Gish Abay', 'Kebele 3';
 
 -- Functionality 20: Display a specific teacher's information with Table valued function
@@ -698,7 +679,6 @@ GO
 
 EXEC Staff_data.Update_staff 'STA002', 'F_name', 'Director'
 
--- Manipulating on table Item
 -- Functionality 36: Add new Items
 
 GO
@@ -881,13 +861,12 @@ GO
 
 EXEC  Shumabo.Remove_progress_report '2023', 'GID11'
 
--- list of students based of academical status like passed, failed and dropout
 -- Functionality 44: Recording passed and failed students (trigger 5)
 
 -- Functionality 45: Displaying passed and failed students
 
 GO
-  CREATE FUNCTION Get_Stud_status (@Stud_ID varchar(10), @Ac_Year INT)
+  CREATE FUNCTION Stud_data.Get_Stud_status (@Stud_ID varchar(10), @Ac_Year INT)
   RETURNS TABLE
   AS
   RETURN (
@@ -896,10 +875,8 @@ GO
   )
 GO
 
-SELECT * FROM dbo.Get_Stud_status('ST00003', '2022')
-
 -- operating on the non_attendat table
--- functionality  : withdraw a student from the lise
+-- functionality  46: withdraw a student from the lise
 
 GO
   CREATE PROCEDURE Stud_data.Withdraw_student(@Ac_Year INT, @Stud_ID VARCHAR(10))
@@ -920,9 +897,8 @@ GO
 
 EXEC Stud_data.Withdraw_student '2023', 'ST0009'
 
-SELECT * from Stud_data.Non_attendant
 
--- Functionality : Update the withdrew students | add reason and leave_date
+-- Functionality 47: Update the withdrew students | add reason and leave_date
 
 GO
   CREATE PROCEDURE Stud_data.Update_Non_attendant (@Ac_Year INT, @Stud_ID VARCHAR(10), @Reason TEXT, @leave_date DATE)
@@ -947,7 +923,7 @@ EXEC Stud_data.Update_Non_attendant 2023, 'ST0008', 'Health case', '2023-08-07'
 EXEC Stud_data.Update_Non_attendant 2023, 'ST0009', 'Transfer to other school', '2023-01-23' 
 
 -- Generating, displaying and updating class schedule
--- functionality 46: store class schedule
+-- functionality 48: store class schedule
 GO
   CREATE PROCEDURE Assignment.Add_Class_schedule (@Schedule_Id VARCHAR(10), @Ac_year INT, @Section_code VARCHAR(6), @Grade_level_ID VARCHAR(6), @Subject_code VARCHAR(6), @Teacher_ID VARCHAR(10), @Day_name VARCHAR(10), @period_no INT, @Start_time TIME, @End_time TIME)
   AS
@@ -968,7 +944,7 @@ EXEC Assignment.Add_Class_schedule '2312AMon4', 2023, '12A', 'GID12', 'SCI12', '
 EXEC Assignment.Add_Class_schedule '2312AMon5', 2023, '12A', 'GID12', 'SP12', 'T005', 'Monday', 5, '04:55:00', '05:35:00'
 EXEC Assignment.Add_Class_schedule '2312AMon6', 2023, '12A', 'GID12', 'SM12', 'T006', 'Monday', 6, '02:35:00', '06:15:00'
 
--- Functionality 47: Displaying class schedule
+-- Functionality 49: Displaying class schedule
 
 GO
   CREATE FUNCTION Get_class_schedule (@Ac_Year INT, @Section_code VARCHAR(6), @Day_name VARCHAR(10))
@@ -989,7 +965,7 @@ SELECT * FROM dbo.Get_class_schedule(2023, '12A', 'Monday')
 SELECT * FROM Assignment.Class_schedule_detail
 WHERE Ac_year = 2023 AND Grade_level_ID = '12A'
 
--- Functionality 48: Updating class schedule
+-- Functionality 50: Updating class schedule
 
 GO
   CREATE PROCEDURE Assignment.Update_class_schedule (@Schedule_ID VARCHAR(10), @Attribute_name NVARCHAR(50), @New_value sql_variant)
@@ -1007,15 +983,15 @@ GO
 
 EXEC Assignment.Update_class_schedule '2312AMon1', 'Subject_code', 'SB12'
 
--- functionlaity 49: Generate Report card (view 7)
--- functionlaity 50: display the report card of a specified student
+-- functionlaity 51: Generate Report card (view 7)
+-- functionlaity 52: display the report card of a specified student
 
 GO
-  CREATE FUNCTION Get_report_card(@Ac_year INT, @Stud_ID VARCHAR(10))
+  CREATE FUNCTION Stud_data.Get_report_card(@Ac_year INT, @Stud_ID VARCHAR(10))
   RETURNS TABLE
   AS
   RETURN (
-    select * FROM Report_card
+    select * FROM Stud_data.Report_card
     WHERE Ac_year = @Ac_year AND Stud_ID = @Stud_ID
   )
 GO

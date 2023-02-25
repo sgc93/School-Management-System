@@ -8,6 +8,27 @@ USE Shumabo_secondary_school
     
     EXEC sp_addrolemember 'db_securityadmin', 'Begood' 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 -- creating user defined role
 
 -- 1. Create a user-defined role

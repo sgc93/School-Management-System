@@ -1,30 +1,25 @@
 /*
- *  Group 6 
  *	Project titele:- Database Design and Implementation of School 
  *                   management system for Shumabo Secondary and Preparatory School  
  *  Group Members:-                
- *     Roll_no     Full_Name                 ID_no
- *        1.    Abiy     Shiferaw         130
- *        2.    Abrham   Desalegn         130
- *        3.    Jemal    Workie           13
+ *     Roll_no     Full_Name               ID_no
+ *        1.    Abiy     Shiferaw         1306078
+ *        2.    Abrham   Desalegn         1307050
+ *        3.    Jemal    Workie           1307712
  *        4.    Smachew  Gedefaw          1308736
- *        5.    Solomon  Muhye            130
- *        6.    Yordanos Ayenew           13
- *  
- *  
+ *        5.    Solomon  Muhye            1309375
+ *        6.    Yordanos Ayenew           1311662
  */
 
--- create a database with name : Management_system_for_Shumabo_Secondary_and_Preparatory_school
+-- create a database with name : Shumabo_Secondary_school
 
-  CREATE DATABASE Shumabo_Secondary_and_Preparatory_school
+CREATE DATABASE Shumabo_Secondary_school
 
--- using the created database as a working area
+-- use the created database as a working database
   
- USE Shumabo_Secondary_and_Preparatory_school                  
- 
- Use master
- drop DATABASE Shumabo_Secondary_and_Preparatory_school
--- creating tables in each schema
+ USE Shumabo_Secondary_school         -- drop DATABASE Shumabo_Secondary_school
+
+-- creating tables in per each schema
 
 -- table 1: all parents (of all students) list in schema Stud_data
 
@@ -67,7 +62,7 @@ CREATE TABLE Assignment.Section (
   CONSTRAINT FK_Section FOREIGN KEY (Grade_level_ID) REFERENCES Assignment.Grade_level (Grade_level_ID)
 );
 
--- table 5: list of all new students which registered in each year
+-- table 5: list of all new students which are sregistered in each year
 
 CREATE TABLE Stud_data.New_Student (
   Ac_year INT, 
@@ -84,6 +79,7 @@ CREATE TABLE Stud_data.New_Student (
   CONSTRAINT PK_Stud PRIMARY KEY (Stud_ID), 
   CONSTRAINT FK_Stud_PID FOREIGN KEY (PID_no) REFERENCES Stud_data.Parent(PID_no)
   );
+
 
 -- table 6: list of all students attended in class
 

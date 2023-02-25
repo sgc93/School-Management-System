@@ -15,7 +15,6 @@ CREATE TABLE Shumabo.Deleted_Academic_calendar (
 );
 
 
-SELECT * FROM Shumabo.deleted_Academic_Calendar
 -- TAble 2
 -- for storing deleted progress reports
 

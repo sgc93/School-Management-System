@@ -48,14 +48,14 @@ GO
        		@Recieving_date = Recieving_date
 		FROM inserted
 
-		IF NOT EXISTS (SELECT * FROM All_items_list WHERE ISer_no = @ISer_no)  -- if the added items not exist in the All_Item table
+		IF NOT EXISTS (SELECT * FROM Resource.All_item WHERE ISer_no = @ISer_no)  -- if the added items not exist in the All_Item table
 			BEGIN
-    			INSERT INTO All_items_list (ISer_no, Item_name, Item_type, Unit_price, Total_price, Current_quantity)
+    			INSERT INTO Resource.All_item (ISer_no, Item_name, Item_type, Unit_price, Total_price, Current_quantity)
     			VALUES (@ISer_no, @Item_name, @Item_type, @Unit_price, @Total_price, @Added_quantity)
 			END
 		ELSE
 			BEGIN
-    			UPDATE All_items_list 
+    			UPDATE Resource.All_item 
     			SET Current_quantity = Current_quantity + @Added_quantity
     			WHERE ISer_no = @ISer_no
 			END
@@ -67,7 +67,7 @@ GO
 -- Functionality  : update the the current amount of a certain item as some of it is withdrawed.
 GO
 	CREATE TRIGGER tr_update_all_items_as_withdrawed
-	ON Withdrawed_Items
+	ON Resource.Withdrawed_Item
 	AFTER INSERT
 	AS
 	BEGIN
@@ -82,11 +82,11 @@ GO
        		@Withdrawing_date = Withdrawing_date
 		FROM inserted
 
-		UPDATE All_items_list 
+		UPDATE Resource.All_item 
 		SET Current_quantity = Current_quantity - @Withdrawed_quantity
 		WHERE ISer_no = @ISer_no
 
-		UPDATE All_items_list
+		UPDATE Resource.All_item
 		SET Total_price = Unit_price * Current_quantity
 		WHERE ISer_no = @ISer_no
 	END
@@ -168,7 +168,7 @@ GO
 
 GO
 	CREATE TRIGGER Stud_data.tr_Set_stud_status
-	ON Transcript
+	ON Stud_data.Transcript
 	AFTER INSERT
 	AS
 	BEGIN
@@ -264,7 +264,7 @@ GO
 
 GO
 	CREATE TRIGGER Tr_no_duble_Transcript
-	ON Transcript
+	ON Stud_data.Transcript
 	AFTER INSERT
 	AS
 	BEGIN
@@ -274,7 +274,7 @@ GO
 				@Ac_year = Ac_year
 		FROM inserted;
 
-		IF EXISTS (SELECT * FROM Transcript
+		IF EXISTS (SELECT * FROM Stud_data.Transcript
 		WHERE Stud_ID = @stud_id AND Ac_year = @Ac_year)
 			BEGIN
 				RAISERROR('YOU ARE TRYING TO GENERATE DOUBLCATE ROASTER', 11,1)
@@ -288,7 +288,7 @@ GO
 -- donot update
 GO
 	CREATE TRIGGER tr_No_Table_Change
-	ON Grade_report 
+	ON Stud_data.Grade_report 
 	INSTEAD OF UPDATE
 	AS
 	PRINT 'Tables should not be modified'

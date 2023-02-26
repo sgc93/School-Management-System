@@ -89,6 +89,7 @@ GO
     the SQL_VARIANT data type also has some limitations, such as less efficient 
     data storage and lower performance compared to using specific data types.
     */
+    
 EXEC Stud_data.Update_parent 'BDR007', 'Sub_city', 'Shumabo'
 EXEC Stud_data.Update_parent 'BDR001', 'Birth_date', '1981-01-01'
 EXEC Stud_data.Update_parent 'BDR001', 'PID_no', 'BDR000'  -- cannot update the PID_no of any parent since its concerns with referential integrity.
@@ -160,7 +161,6 @@ GO
     s.M_name, 
     s.Gender, 
     s.Birth_date, 
-    s.Age, 
     s.Sub_city, 
     s.Kebele, 
     s.PID_no, 
@@ -179,6 +179,7 @@ GO
 EXEC show_Student 'ST00001'  -- With there phone number
 EXEC Display_student 'ST0008'  -- without phone number
 
+Select * FROM Stud_data.Student_phone
 -- Functionality 7: Add new subject
 
 GO
@@ -199,13 +200,13 @@ GO
   AS
   BEGIN
     SELECT * FROM
-    Subject_Teacher where Subject_code = @Subject_code
+    Assignment.Subject_Teacher where Subject_code = @Subject_code
   END
 GO
 
 EXEC Get_Subject 'STD11'
 
--- Fun tionality 9: Update specific infrmation of specific student
+-- Fun tionality 9: Update specific information of specific Subject
 
 GO
   CREATE PROCEDURE Assignment.Update_Subject (@Subject_code VARCHAR(6), @Attribute_name NVARCHAR(50), @New_value sql_variant)
@@ -254,6 +255,10 @@ GO
     @Second_sem_final_exam_50 FLOAT )
   AS
   BEGIN
+  if (@Frist_sem_mid_exam_25 > 25)
+    BEGIN
+      RA
+    END
     INSERT INTO Stud_data.Roaster(Ac_year, Stud_ID, Grade_level_ID, Section_code, Subject_code, Frist_sem_mid_exam_25, First_sem_quiz_10, First_sem_assignment_15, First_sem_final_exam_50, Second_sem_mid_exam_25, Second_sem_quiz_10, Second_sem_assignment_15, Second_sem_final_exam_50 )
     VALUES (@Ac_year, @Stud_ID, @Grade_level_ID, @Section_code, @Subject_code, @Frist_sem_mid_exam_25, @First_sem_quiz_10, @First_sem_assignment_15, @First_sem_final_exam_50, @Second_sem_mid_exam_25, @Second_sem_quiz_10, @Second_sem_assignment_15, @Second_sem_final_exam_50)
   END
@@ -267,12 +272,12 @@ GO
     CREATE PROCEDURE Display_Roaster(@Stud_ID VARCHAR(10), @Ac_year INT)
     AS
     BEGIN
-        SELECT * FROM Roaster_list
+        SELECT * FROM Stud_data.Roaster
         WHERE Stud_ID = @Stud_ID AND Ac_year = @Ac_year
     END
 GO
 
-EXEC Display_Roaster 'ST00006', 2022
+EXEC Display_Roaster 'ST00004', 2023
 
 -- Functionlity 13: update specific information of specific student
 
@@ -319,10 +324,9 @@ GO
     SET @Final_avg = (@First_semester_avg + @Second_semester_avg) / 2;
     INSERT INTO Stud_data.Transcript (Ac_Year, Stud_ID, Grade_level_ID, Section_Code,First_semester_total, Second_semester_total, First_semester_avg, Second_semester_avg, Final_avg, Conduct) 
     VALUES (@Ac_Year, @Stud_ID, @Grade_level_ID, @Section_code, @First_semester_total, @Second_semester_total, @First_semester_avg, @Second_semester_total, @Final_avg, @Conduct)
+    select * from  Stud_data.Transcript
   END
 GO
-
-drop procedure Stud_data.Generate_Transcript
 
 EXEC Stud_data.Generate_Transcript 'ST00001', '2022', 'A'
 EXEC Stud_data.Generate_Transcript 'ST00004', '2023', 'A'
@@ -360,7 +364,7 @@ GO
     )
 GO
 
-SELECT * FROM dbo.Display_Transcript('ST00001', '2022')
+SELECT * FROM Stud_data.Display_Transcript('ST00001', '2022')
 
 -- Functionality 17: create the transform form for specific student
 
@@ -491,7 +495,7 @@ GO
   END
 GO
 
-EXEC Update_Grade_Assignment 'T007', 'GID10'
+EXEC Assignment.Update_Grade_Assignment 'T007', 'GID10'
 
 
 -- Assigning teachers to specific Section and subject
@@ -506,7 +510,7 @@ GO
   END
 GO
 
-EXEC Assign_Teacher_to_Sec_Sub 'T007', '10A', 'SA10'
+EXEC Assignment.Assign_Teacher_to_Sec_Sub 'T007', '10A', 'SA10'
 
 -- functionality 26: Displaying
 
@@ -748,7 +752,6 @@ GO
   END
 GO
 
-drop PROCEDURE Withdraw_Item
 
 EXEC Resource.Withdraw_Item 'IT1113', '2023-02-02', 13, 'Class room Education', 'Tr. chernet'
 EXEC Resource.Withdraw_Item 'IT1111', '2022-02-02', 2, 'losting the priviously given one', 'St. Jemila smachew'
@@ -775,7 +778,7 @@ GO
   RETURNS TABLE
   AS
   RETURN (
-    SELECT * FROM Current_Item_Status
+    SELECT * FROM Resource.Current_Item_Status
     WHERE ISer_no = @ISer_no  
   )
 GO

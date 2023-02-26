@@ -125,7 +125,7 @@ GO
     		@PID_no = PId_no
 		FROM inserted
 
-		IF NOT EXISTS (SELECT * FROM Stud_data.Student WHERE Stud_ID = @Stud_ID AND Ac_year = @Ac_Year)  -- if the added items not exist in the All_Item table
+		IF NOT EXISTS (SELECT * FROM Stud_data.Student WHERE Stud_ID = @Stud_ID AND Ac_year = @Ac_Year)  
 			BEGIN
     			INSERT INTO Stud_data.Student (Ac_year, Stud_ID, F_name, L_name, M_name, Gender, Birth_date, Sub_city, Kebele, PID_no)
     			VALUES(@Ac_Year, @Stud_ID, @F_Name, @L_Name, @M_name, @Gender, @Birth_date, @Sub_city, @Kebele, @PID_no);
@@ -133,7 +133,7 @@ GO
 	END
 GO
 
--- Trigger 5
+-- Trigger 
 -- Functionality  : store the information of the withdrew students
 
 GO
@@ -163,7 +163,7 @@ GO
 		PRINT 'student has withdrew, fill some data about the withdrawn student'
 	END
 GO
--- Trigger 5
+-- Trigger 7
 -- functionality  : store the last status (passed or failed) of students
 
 GO
@@ -216,7 +216,7 @@ GO
 GO
 
 -- Triggers that stores the deleted tables
--- Trigger 6: 
+-- Trigger 7: 
 -- store the deleted calanders
 
 GO
@@ -245,7 +245,7 @@ the server and the client. When NOCOUNT is set to ON, the number of affected
  of the database.
  */
 
--- Trigger 7
+-- Trigger 8
 -- Storing the deleted Progress report
 
 GO

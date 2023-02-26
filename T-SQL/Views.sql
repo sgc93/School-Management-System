@@ -16,7 +16,7 @@ GO
             Teacher_data.Teacher.Degree_level,
             Teacher_data.Teacher.Sub_city,
             Teacher_data.Teacher.Kebele,
-            Teacher_phone.Phone_number,
+            Teacher_data.Teacher_phone.Phone_number,
             Assignment.Teacher_Grade_Level.Grade_level_ID,
             Assignment.Teacher_section_subject.Section_code,
             Assignment.Teacher_section_subject.Subject_code
